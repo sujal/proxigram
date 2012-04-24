@@ -3,7 +3,7 @@
 An experiment in node.js, express.js, and Instagram running on Heroku
 using less.js.
 
-## WHat does it do?
+## What does it do?
 
 The idea was simple: I wanted to put a bit of JS on my blog to show my
 latest few instagram photos. I just wanted thumbnails. The problem I ran
