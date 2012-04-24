@@ -1,4 +1,4 @@
-# Proxstagram
+# Proxigram (or Proxstagram)
 
 An experiment in node.js, express.js, and Instagram running on Heroku
 using less.js.
