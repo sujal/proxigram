@@ -1,3 +1,36 @@
 @color: red;
-body { padding: 200px; font: 18px "Lucida Grande", Helvetica, Arial, sans-serif; }
 a { color: @color; }
+
+
+.maincontent {
+  min-height: 300px;
+}
+
+.block-wrapper {
+  .section-header {
+    font-variant: small-caps;
+    text-transform: lowercase;
+    border-bottom: 1px solid #CCF;
+    margin-bottom: 12px;
+  }
+}
+
+.about-section {
+  ul {
+    list-style: none;
+    margin-left: 0;
+    li {
+      list-style: none;
+      display: block;
+      margin-left: 0;
+    }
+  }
+}
+
+.footer {
+  border-top: 1px solid black;
+  padding-top: 18px;
+  .footer-link {
+    text-align: right;
+  }
+}
