@@ -1,4 +1,6 @@
 node_modules
 public/styles/*.css
 .DS_Store
+
 *.tmproj
+setup_env.sh
