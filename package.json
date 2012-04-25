@@ -7,6 +7,12 @@
     , "less-middleware": ">= 0.0.1"
     , "jade": ">= 0.0.1"
     , "moment": ">= 0.0.1"
+    , "passport": ">= 0.1.8"
+    , "passport-instagram": ">= 0.1.1"
+    , "mongoose": ">= 2.5.0"
+    , "connect": ">= 0.0.1 < 2"
+    , "connect-redis": ">= 1.0.0"
+    , "connect-heroku-redis": ">= 0.1.2"
   }
   , "engines": {
       "node": "0.6.x"
