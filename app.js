@@ -1,3 +1,49 @@
+/* Main application entry file. Please note, the order of loading is important.
+ * Configuration loading and booting of controllers and custom error handlers */
+
+var express = require('express')
+var fs = require('fs')
+    , utils = require('./lib/utils')
+    , simpleTimestamps = require('./lib/timestamps')
+    , auth = require('./authorization');
+
+
+// Load configurations
+exports = module.exports = config = require("./config");
+
+require('./db-connect')                // Bootstrap db connection
+
+// Bootstrap models
+var models_path = __dirname + '/app/models'
+var model_files = fs.readdirSync(models_path)
+model_files.forEach(function(file){
+  if (file == 'user.js')
+    User = require(models_path+'/'+file)
+  else
+    require(models_path+'/'+file)
+})
+
+var app = express.createServer()       // express app
+require('./settings').boot(app)        // Bootstrap application settings
+
+// Bootstrap controllers
+var controllers_path = __dirname + '/app/controllers'
+var controller_files = fs.readdirSync(controllers_path)
+controller_files.forEach(function(file){
+  require(controllers_path+'/'+file)(app)
+})
+
+require('./error-handler').boot(app)   // Bootstrap custom error handler
+mongooseAuth.helpExpress(app)          // Add in Dynamic View Helpers
+everyauth.helpExpress(app, { userAlias: 'current_user' })
+
+// Start the app by listening on <port>
+var port = process.env.PORT || 4000
+app.listen(port)
+console.log('Express app started on port '+port)
+
+
+
 
 /**
  * Module dependencies.
@@ -6,8 +52,7 @@
 var express = require('express')
   , passport = require ('passport')
   , InstagramStrategy = require('passport-instagram').Strategy
-  , routes = require('./routes')
-  , wizard = require('./wizard')
+  , controllers = require("./controllers")
   , mongoose = require('mongoose');
 var connect = require('connect'), 
     HerokuRedisStore = require('connect-heroku-redis')(connect);
@@ -15,20 +60,20 @@ var lessMiddleware = require('less-middleware');
 
 var User = require("./models/user").User;
 
-mongoose.connect(process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development");
-
-// Configuration
-
-var INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID
-var INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
-
-var oauth_callback_url = null;
-if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
-  oauth_callback_url = "http://localhost:4000/auth/instagram/callback"
-} else {
-  // some other environment
-  oauth_callback_url = "http://proxigram.com/auth/instagram/callback"  
-}
+// mongoose.connect(process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development");
+// 
+// // Configuration
+// 
+// var INSTAGRAM_CLIENT_ID = process.env.INSTAGRAM_CLIENT_ID
+// var INSTAGRAM_CLIENT_SECRET = process.env.INSTAGRAM_CLIENT_SECRET;
+// 
+// var oauth_callback_url = null;
+// if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
+//   oauth_callback_url = "http://proxigram.dev/auth/instagram/callback"
+// } else {
+//   // some other environment
+//   oauth_callback_url = "http://proxigram.com/auth/instagram/callback"  
+// }
 
 // Use the InstagramStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -117,6 +162,8 @@ app.get('/', routes.index);
 app.get('/about', routes.about);
 app.get('/step1', wizard.step1);
 app.get('/step2', ensureAuthenticated, wizard.step2);
+app.get('/code', ensureAuthenticated, wizard.code);
+app.get('/api/photos', api.photos);
 app.get('/auth/instagram',
   passport.authenticate('instagram'),
   function(req, res){

@@ -1,7 +1,5 @@
-var mongoose = require("mongoose");
-var simpleTimestamps = require("../lib/timestamps.js");
 
-var UserSchema = new mongoose.Schema({
+var User = new mongoose.Schema({
   instagram_id: {
     type: String,
     lowercase: true,
@@ -44,10 +42,6 @@ var UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.plugin(simpleTimestamps);
+User.plugin(simpleTimestamps);
 
-var User = mongoose.model('User', UserSchema);
-
-module.exports = {
-  User: User
-}
+mongoose.model('User', User);
