@@ -11,16 +11,26 @@ html
       .row
         .span12
           .page-header
-            h1 
-              a(href="/") Proxigram 
-              small= title 
+            .row
+              .span6
+                h1
+                  a(href="/") Proxigram
+                  small= title 
+              .span6.header-link
+                - if (current_user != undefined)
+                  a(href="/logout") Logout
+                - else
+                  a(href="/auth/instagram") Login
+                
     section.maincontent.container!= body
     footer.container.footer
       .row
         .span6
           | Copyright &copy; #{new Date().getFullYear()} Forche Software / 
           a(href="http://twitter.com/sujal") @sujal
-        .span2.offset4.footer-link
+        .span1.offset4.footer-link
+          a(href="/faq") FAQ
+        .span1.footer-link
           a(href="/about") About
           
     script

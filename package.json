@@ -14,6 +14,7 @@
     , "connect-redis": ">= 1.0.0"
     , "connect-heroku-redis": ">= 0.1.2"
     , "airbrake" : ">=0.2.0"
+    , "instagram-node-lib": ">=0.0.7"
   }
   , "engines": {
       "node": "0.6.x"

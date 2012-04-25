@@ -79,7 +79,7 @@ function bootApplication(app) {
     app.use(express.session({ store: new HerokuRedisStore, secret: (process.env.SESSION_SECRET || "sssh sssh ssshhhhhhh") }));
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(express.static(__dirname + '/public'));
+    app.use(express.static(__dirname + '/public', {maxAge: 86400000}));
     app.use(express.logger(':method :url :status'));
     app.use(express.favicon());
     app.use(app.router);
@@ -88,6 +88,23 @@ function bootApplication(app) {
   app.configure('development', function(){
     // app.use(express.errorHandler());
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  });
+  
+  // Suppress errors, allow all search engines
+  app.configure('production', function(){
+  	app.all('/robots.txt', function(req,res) {
+  		res.send('User-agent: *', {'Content-Type': 'text/plain'});
+  	});
+  });
+  
+  // Template helpers
+  app.dynamicHelpers({
+  	'session': function(req, res) {
+  		return req.session;
+  	},
+  	'current_user': function(req, res) {
+  	  return req.user;
+  	}
   });
   
 }
