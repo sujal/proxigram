@@ -1,7 +1,7 @@
 config = {
   instagram: {
-    client_id = process.env.INSTAGRAM_CLIENT_ID
-    , client_secret = process.env.INSTAGRAM_CLIENT_SECRET
+    client_id: process.env.INSTAGRAM_CLIENT_ID
+    , client_secret: process.env.INSTAGRAM_CLIENT_SECRET
   },
   db: {
     uri: process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development"

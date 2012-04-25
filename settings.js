@@ -3,14 +3,14 @@
  */
 
 var express = require('express')
-  , passport = require ('passport')
   , InstagramStrategy = require('passport-instagram').Strategy
-  , controllers = require("./controllers")
-  , mongoose = require('mongoose');
+  , mongoose = require('mongoose')
   , connect = require('connect')
   , HerokuRedisStore = require('connect-heroku-redis')(connect)
   , lessMiddleware = require('less-middleware');
-  
+
+var User = mongoose.model('User');
+
 exports.boot = function(app) {
   bootApplication(app);
 }
@@ -66,8 +66,9 @@ passport.deserializeUser(function(uid, done) {
 function bootApplication(app) {
   app.configure(function(){
   
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/app/views');
     app.set('view engine', 'jade');
+    app.set('view options', { layout: 'layouts/default' })
     app.use(lessMiddleware({
             src: __dirname + '/public',
             compress: true
