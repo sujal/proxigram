@@ -5,6 +5,9 @@ config = {
   },
   db: {
     uri: process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development"
+  },
+  airbrake: {
+    api_key: "c2506ceb286a972603c9b595e2557961"
   }
 }
 
