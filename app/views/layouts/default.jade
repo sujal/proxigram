@@ -17,7 +17,7 @@ html
                   a(href="/") Proxigram
                   small= title 
               .span6.header-link
-                - if (current_user != undefined)
+                - if (current_user != null)
                   a(href="/logout") Logout
                 - else
                   a(href="/auth/instagram") Login

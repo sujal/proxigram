@@ -103,7 +103,7 @@ function bootApplication(app) {
   		return req.session;
   	},
   	'current_user': function(req, res) {
-  	  return req.user;
+  	  return req.user === undefined ? null : req.user;
   	}
   });
   
