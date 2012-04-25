@@ -68,4 +68,16 @@ function bootErrorHandler(app) {
     }
   })
   
+  var airbrake;
+  
+  if (config.airbrake && config.airbrake.api_key) {
+  	airbrake = require('airbrake').createClient(config.airbrake.api_key);
+  }
+
+  process.addListener('uncaughtException', function (err, stack) {
+  	console.log('Caught exception: '+err+'\n'+err.stack);
+  	if (airbrake) { airbrake.notify(err); }
+  });
+  
+  
 }
