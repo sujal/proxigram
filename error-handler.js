@@ -54,7 +54,7 @@ function bootErrorHandler(app) {
         status: 404,
         error: err,
         showStack: app.settings.showStackError,
-        title: 'Oops! The page you requested desn\'t exist'
+        title: 'Oops! The page you requested doesn\'t exist'
       })
     }
     else {
