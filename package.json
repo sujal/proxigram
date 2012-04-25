@@ -1,6 +1,6 @@
 {
-    "name": "application-name"
-  , "version": "0.0.1"
+    "name": "proxigram"
+  , "version": "0.1.0"
   , "private": true
   , "dependencies": {
       "express": "2.5.8"
@@ -13,6 +13,7 @@
     , "connect": ">= 0.0.1 < 2"
     , "connect-redis": ">= 1.0.0"
     , "connect-heroku-redis": ">= 0.1.2"
+    , "airbrake" : ">=0.2.0"
   }
   , "engines": {
       "node": "0.6.x"
