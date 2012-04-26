@@ -11,6 +11,10 @@ module.exports = function(app) {
     function(req, res){
       user = req.user
       ImageList.instagramPhotosForUser(user, function(err, imageList){
+        var limit = Number(req.param("limit", "30"));
+        if (limit < imageList.images.length) {
+          imageList.images.splice(limit,imageList.images.length-limit);
+        }
         if (req.param("include_raw", "no") == "no") {
           for (var i = imageList.images.length - 1; i >= 0; i--){
             imageList.images[i].raw_json = undefined;
@@ -18,6 +22,9 @@ module.exports = function(app) {
         }
         res.send({meta: 200, data: imageList}, 200);
       });
-    });
+    }
+  );
+    
+    
   
 }

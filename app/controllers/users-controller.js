@@ -1,4 +1,3 @@
-
 module.exports = function(app) {
   
   app.get('/auth/instagram',
@@ -23,5 +22,4 @@ module.exports = function(app) {
   app.get('/code', ensureAuthenticated, function(req, res) {
     res.render('users/code', { title: 'Step 2: Grab your JS and Go!' })
   });
-  
 }

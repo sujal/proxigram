@@ -10,26 +10,38 @@ var ImageList = new mongoose.Schema({
     enum: ["instagram"]
   },
   user_id: Schema.ObjectId,
+  provider_user_id: {
+    type: String,
+    trim: true
+  },
   images: [NormalizedImage.schema],
   response_json: {} // doesn't include images
 });
 
 ImageList.index({ provider: 1, user_id: 1 }, { unique: true })
+ImageList.index({ provider: 1, provider_user_id: 1 }, { unique: true })
 
 ImageList.plugin(simpleTimestamps);
 
-ImageList.statics.instagramPhotosForUser = function (user, cb) {
+ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
+  
+  if ('function' == typeof options) {
+    cb = options;
+    options = {};
+  }
+  
   console.log("I'm in instagramPhotosForUser");
   var myClass = this;
   
   this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
     if (err == null) {
-      if ( imageList == null || moment().diff(moment(imageList.updated_at)) > 86400000 ) {
+      if ( imageList == null || moment().diff(moment(imageList.updated_at)) > 86400000 || options.force_refresh === true ) {
         // didn't find it or it's old, call Instagram!
         if (imageList == null) {
           imageList = new myClass();
           imageList.provider = "instagram";
           imageList.user_id = user.id;
+          imageList.provider_user_id = user.instagram_id;
         }
 
         myClass.refreshInstagramFeedForUserImageList(user, imageList, cb);
