@@ -12,10 +12,12 @@ config = {
 }
 
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
-  config.instagram.oauth_callback_url = "http://proxigram.dev/auth/instagram/callback"
+  config.instagram.oauth_callback_url = "http://proxigram.dev/auth/instagram/callback";
+  config.instagram.realtime_callback_url = "http://proxigram.com/instagram/realtime";
 } else {
   // some other environment
-  config.instagram.oauth_callback_url = "http://proxigram.com/auth/instagram/callback"  
+  config.instagram.oauth_callback_url = "http://proxigram.com/auth/instagram/callback"; 
+  config.instagram.realtime_callback_url = "http://proxigram.com/instagram/realtime";
 }
 
 module.exports = config;

@@ -9,12 +9,14 @@
     , "moment": ">= 0.0.1"
     , "passport": ">= 0.1.8"
     , "passport-instagram": ">= 0.1.1"
+    , "passport-http-bearer": ">= 0.1.2"
     , "mongoose": ">= 2.5.0"
     , "connect": ">= 0.0.1 < 2"
     , "connect-redis": ">= 1.0.0"
     , "connect-heroku-redis": ">= 0.1.2"
     , "airbrake" : ">=0.2.0"
     , "instagram-node-lib": ">=0.0.7"
+    , "express-messages-bootstrap": "git://github.com/sujal/express-messages-bootstrap.git#bootstrap2.0"
   }
   , "engines": {
       "node": "0.6.x"

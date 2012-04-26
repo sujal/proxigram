@@ -1,3 +1,12 @@
+var crypto = require("crypto");
+
+var generateAPIKey = function(spec) {
+  if (spec == null) { spec = {} };
+  var method = spec.method || "sha1";
+  var encoding = spec.encoding || "hex";
+  var bytes = spec.bytes || 2048;
+  return crypto.createHash(method).update(crypto.randomBytes(bytes)).digest(encoding);
+}
 
 var User = new mongoose.Schema({
   instagram_id: {
@@ -16,13 +25,51 @@ var User = new mongoose.Schema({
     trim: true,
     enum: ["instagram"]
   },
-  full_name: {
+  displayName: {
     type: String,
     trim: true
+  },
+  name: {
+    familyName: {
+      type: String,
+      trim: true
+    },
+    givenName: {
+      type: String,
+      trim: true
+    },
+    middleName: {
+      type: String,
+      trim: true
+    }
   },
   profile_picture: {
     type: String,
     trim: true
+  },
+  bio: {
+    type: String,
+    trim: true
+  },
+  website: {
+    type: String,
+    trim: true
+  },
+  external_counts: {
+    instagram: {
+      media: {
+        type: Number,
+        default: 0
+      },
+      follows: {
+        type: Number,
+        default: 0
+      },
+      followed_by: {
+        type: Number,
+        default: 0
+      }
+    }
   },
   oauth_token: {
     type: String,
@@ -38,10 +85,13 @@ var User = new mongoose.Schema({
   api_key: {
     type: String,
     unique: true,
-    trim: true
+    trim: true,
+    default: generateAPIKey
   }
 });
 
 User.plugin(simpleTimestamps);
+
+User.methods.generateAPIKey = generateAPIKey;
 
 mongoose.model('User', User);

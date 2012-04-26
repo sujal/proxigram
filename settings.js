@@ -4,12 +4,19 @@
 
 var express = require('express')
   , InstagramStrategy = require('passport-instagram').Strategy
+  , BearerStrategy = require('passport-http-bearer').Strategy
   , mongoose = require('mongoose')
   , connect = require('connect')
   , HerokuRedisStore = require('connect-heroku-redis')(connect)
   , lessMiddleware = require('less-middleware');
 
 var User = mongoose.model('User');
+
+Instagram = require('instagram-node-lib');
+Instagram.set('client_id', config.instagram.client_id);
+Instagram.set('client_secret', config.instagram.client_secret);
+Instagram.set('callback_url', config.instagram.realtime_callback_url);
+Instagram.set('maxSockets', 10);
 
 exports.boot = function(app) {
   bootApplication(app);
@@ -38,8 +45,12 @@ passport.use(new InstagramStrategy({
           new_user.provider = "instagram";
           new_user.instagram_id = profile.id;
           new_user.instagram_name = profile.username;
-          new_user.full_name = profile.full_name;
-          new_user.profile_picture = profile.profile_picture;
+          new_user.displayName = profile.displayName;
+          new_user.name = profile.name;
+          new_user.bio = profile._json.data.bio;
+          new_user.website = profile._json.data.website;
+          new_user.external_counts.instagram = profile._json.data.counts;
+          new_user.profile_picture = profile._json.data.profile_picture;
           new_user.oauth_token = accessToken;
           new_user.save(function(err){
             if (err) { throw err; }
@@ -47,6 +58,17 @@ passport.use(new InstagramStrategy({
           });
         }
       });
+    });
+  }
+));
+passport.use("token-auth", new BearerStrategy({ }, 
+  function(token, done){
+    process.nextTick(function () {
+      User.findOne({api_key: token}, function(err, user) {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        return done(null, user);
+      })
     });
   }
 ));
@@ -104,7 +126,8 @@ function bootApplication(app) {
   	},
   	'current_user': function(req, res) {
   	  return req.user === undefined ? null : req.user;
-  	}
+  	},
+  	messages: require('express-messages-bootstrap')
   });
   
 }

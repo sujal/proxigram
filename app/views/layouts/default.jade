@@ -1,7 +1,7 @@
 !!!
 html
   head
-    title= title
+    title= (typeof(title) == 'undefined' ? "" : title)
     link(rel='stylesheet', href='/styles/bootstrap.css')
     link(rel='stylesheet', href='/styles/style.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
@@ -21,12 +21,15 @@ html
                   a(href="/logout") Logout
                 - else
                   a(href="/auth/instagram") Login
-                
+    section.container.messages-holder
+      != messages()
     section.maincontent.container!= body
     footer.container.footer
       .row
         .span6
-          | Copyright &copy; #{new Date().getFullYear()} Forche Software / 
+          | Copyright &copy; #{new Date().getFullYear()} 
+          a(href="http://forchesoftware.com") Forche Software 
+          | / 
           a(href="http://twitter.com/sujal") @sujal
         .span1.offset4.footer-link
           a(href="/faq") FAQ
