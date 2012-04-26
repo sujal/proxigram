@@ -24,49 +24,68 @@ ImageList.statics.instagramPhotosForUser = function (user, cb) {
   
   this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
     if (err == null) {
-      if ( imageList == null || moment().diff(moment(imageList.updated_at)) > 3600000 ) {
+      if ( imageList == null || moment().diff(moment(imageList.updated_at)) > 86400000 ) {
         // didn't find it or it's old, call Instagram!
         if (imageList == null) {
           imageList = new myClass();
           imageList.provider = "instagram";
           imageList.user_id = user.id;
         }
-        Instagram.users.recent({ count: 30, user_id: user.instagram_id, access_token: user.oauth_token,
-          complete: function(data, pagination){
-            console.log("instagram call complete, data count is "+data.length);
-            if (data != null) {
 
-              imageList.images.forEach(function(p){
-                p.remove();
-              });
-              
-              data.forEach(function(item){
-                var nimage = new NormalizedImage();
-                nimage.populateFromMediaData(item);
-                imageList.images.push(nimage);
-              });
-              
-              imageList.save(function(err){
-                if (!err) 
-                { 
-                  cb(null, imageList); 
-                } else {
-                  console.log("there was an error: " + err); 
-                  cb(err, null) ;
-                }
-              });
-            }
-          },
-          error: function(errorMessage, errorObject, caller) {
-            console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
-            cb(errorMessage, null);
-          }
-        })
+        myClass.refreshInstagramFeedForUserImageList(user, imageList, cb);
+
       } else {
         cb(null, imageList);
       } 
     } else {
       cb(err, imageList);
+    }
+  });
+}
+
+ImageList.statics.refreshInstagramFeedForUserImageList = function(user, imageList, cb) {
+  
+  Instagram.users.recent({ count: 30, user_id: user.instagram_id, access_token: user.oauth_token,
+    complete: function(data, pagination){
+      console.log("instagram call complete, data count is "+data.length);
+      if (data != null) {
+
+        imageList.images.forEach(function(p){
+          p.remove();
+        });
+        
+        data.forEach(function(item){
+          var nimage = new NormalizedImage();
+          nimage.populateFromMediaData(item);
+          imageList.images.push(nimage);
+        });
+        
+        imageList.save(function(err){
+          if (!err) 
+          { 
+            cb(null, imageList); 
+          } else {
+            console.log("there was an error: " + err); 
+            cb(err, null) ;
+          }
+        });
+      }
+    },
+    error: function(errorMessage, errorObject, caller) {
+      console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
+      cb(errorMessage, null);
+    }
+  });
+  
+}
+
+ImageList.statics.subscribeForUserNotifications = function (user, cb) {
+  Instagram.users.subscribe({
+    complete: function(data, pagination) {
+      cb(null, data);
+    },
+    error: function(errorMessage, errorObject, caller) {
+      cb(errorMessage, errorObject);
     }
   });
 }

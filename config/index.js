@@ -7,17 +7,17 @@ config = {
     uri: process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development"
   },
   airbrake: {
-    api_key: "c2506ceb286a972603c9b595e2557961"
+    api_key: process.env.AIRBRAKE_API_KEY
   }
 }
 
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
   config.instagram.oauth_callback_url = "http://proxigram.dev/auth/instagram/callback";
-  config.instagram.realtime_callback_url = "http://proxigram.com/instagram/realtime";
+  config.instagram.realtime_callback_url = process.env.REALTIME_CALLBACK_URL;
 } else {
   // some other environment
   config.instagram.oauth_callback_url = "http://proxigram.com/auth/instagram/callback"; 
-  config.instagram.realtime_callback_url = "http://proxigram.com/instagram/realtime";
+  config.instagram.realtime_callback_url = process.env.REALTIME_CALLBACK_URL;
 }
 
 module.exports = config;
