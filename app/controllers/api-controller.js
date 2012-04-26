@@ -9,8 +9,9 @@ module.exports = function(app) {
     // need to do a token check, not a passport auth check
     // passport.authenticate('instagram', { failureRedirect: '/' }), 
     function(req, res){
-      user = req.user
-      ImageList.instagramPhotosForUser(user, function(err, imageList){
+      var user = req.user
+      var force_refresh = req.param("force_refresh", "false") == "true";
+      ImageList.instagramPhotosForUser(user, {force_refresh: force_refresh}, function(err, imageList){
         var limit = Number(req.param("limit", "30"));
         if (limit < imageList.images.length) {
           imageList.images.splice(limit,imageList.images.length-limit);

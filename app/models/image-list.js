@@ -62,15 +62,13 @@ ImageList.statics.refreshInstagramFeedForUserImageList = function(user, imageLis
       console.log("instagram call complete, data count is "+data.length);
       if (data != null) {
 
-        imageList.images.forEach(function(p){
-          p.remove();
-        });
+        imageList.images = [];
         
-        data.forEach(function(item){
+        for (var i=0; i < data.length; i++) {
           var nimage = new NormalizedImage();
-          nimage.populateFromMediaData(item);
-          imageList.images.push(nimage);
-        });
+          nimage.populateFromMediaData(data[i]);
+          imageList.images.push(nimage);          
+        };
         
         imageList.save(function(err){
           if (!err) 
