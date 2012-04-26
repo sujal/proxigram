@@ -90,7 +90,8 @@ function bootApplication(app) {
   
     app.set('views', __dirname + '/app/views');
     app.set('view engine', 'jade');
-    app.set('view options', { layout: 'layouts/default' })
+    app.set('view options', { layout: 'layouts/default' });
+    app.set('jsonp callback', true);
     app.use(lessMiddleware({
             src: __dirname + '/public',
             compress: true
