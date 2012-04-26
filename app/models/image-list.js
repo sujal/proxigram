@@ -91,7 +91,7 @@ ImageList.statics.refreshInstagramFeedForUserImageList = function(user, imageLis
   
 }
 
-ImageList.statics.subscribeForUserNotifications = function (user, cb) {
+ImageList.statics.subscribeForUserNotifications = function (cb) {
   Instagram.users.subscribe({
     complete: function(data, pagination) {
       cb(null, data);

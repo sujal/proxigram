@@ -87,6 +87,10 @@ var User = new mongoose.Schema({
     unique: true,
     trim: true,
     default: generateAPIKey
+  },
+  admin: {
+    type: Boolean,
+    default: false
   }
 });
 

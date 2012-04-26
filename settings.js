@@ -95,6 +95,17 @@ function bootApplication(app) {
             src: __dirname + '/public',
             compress: true
         }));
+        
+    // HACKY middleware to bring req.rawBody back since
+    // Instagram-node-lib requires it. Will fix that lib
+    // soon.
+    // This taken from here: https://github.com/visionmedia/express/issues/897
+    app.use (function(req, res, next) {
+        req.rawBody = '';
+        req.setEncoding('utf8');
+        req.on('data', function(chunk) { req.rawBody += chunk });
+        next();
+    });
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());

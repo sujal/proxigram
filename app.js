@@ -7,11 +7,21 @@ var fs = require('fs')
 
 exports = module.exports = passport = require ('passport');
 
+// AUTHENTICATION Middleware
+// making these global for now - not sure what the best practice should be
 ensureAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) { return next(); }
+  req.flash("warn", "You must be logged in to do that.");
   res.redirect('/step1');
 }
 
+ensureAdmin = function(req, res, next) {
+  if (req.user !== undefined && req.user.admin == true) { return next(); }
+  req.flash("warn", "You don't have permission to see that.");
+  res.redirect("/");
+}
+
+// Plugin for models, also global :-(
 simpleTimestamps = require('./lib/timestamps');
 
 // Load configurations
