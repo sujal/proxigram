@@ -13,7 +13,10 @@ config = {
 
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") {
   config.instagram.oauth_callback_url = "http://proxigram.dev/auth/instagram/callback";
-  config.instagram.realtime_callback_url = process.env.REALTIME_CALLBACK_URL;
+  // this needs to be an env var b/c depends on how you can route traffic to your 
+  // dev box from instagram's servers. For example, i use DynDNS and route specific 
+  // ports to my dev box.
+  config.instagram.realtime_callback_url = process.env.REALTIME_CALLBACK_URL; 
 } else {
   // some other environment
   config.instagram.oauth_callback_url = "http://proxigram.com/auth/instagram/callback"; 
