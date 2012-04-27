@@ -30,8 +30,10 @@
               $('<img>').addClass('proxigram-image').attr('src', image.images.thumbnail.url).attr('alt', "image by " + image.source_user.full_name )))).append(
           $('<div>').addClass('proxigram-caption').text(image.caption)).append(
           $('<div>').addClass('proxigram-meta').append (
-            $('<span>').addClass('proxigram-like-count').text(image.likes_count + " likes")).append (
-            $('<span>').addClass('proxigram-comment-count').text(image.comment_count + " comments")));
+            $('<span>').addClass('proxigram-like-count').append(
+              $("<a>").attr("href", image.link).text(image.likes_count + " likes"))).append (
+            $('<span>').addClass('proxigram-comment-count').append(
+              $("<a>").attr("href", image.link).text(image.comment_count + " comments"))));
     }
     
     function createEmptyElement(message) {
@@ -52,6 +54,11 @@
     }
     
     $(that).empty();
+    
+    if (settings.include_default_styles === true) {
+      var style_tag = $("<style type='text/css'>.proxigram-image-wrapper{min-height:210px;width:150px;padding:10px;margin: 5px;background-color:#eee;font-size:10px;line-height:13px;} .proxigram-image-wrapper, } .proxigram-image-wrapper img{ } .proxigram-comment-count:before {content: ' '} .proxigram-image-wrapper span { display: inline-block; width: 75px; } .proxigram-image-wrapper .proxigram-meta{margin-top: 8px;} .proxigram-image-wrapper .proxigram-comment-count{ text-align: right} .proxigram-caption{margin-top:8px;min-height:30px} </style>");
+      $(that).append(style_tag);
+    }
     
     if (settings.access_token !== null) {
       $.ajax(finalUrlWithArguments(settings), {
