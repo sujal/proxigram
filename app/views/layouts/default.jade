@@ -3,10 +3,15 @@ html
   head
     title= (typeof(title) == 'undefined' ? "" : title)
     //- link(rel='stylesheet', href='/styles/bootstrap.css')
+    meta(name="viewport",content="width=device-width, initial-scale=1.0")
     link(rel='stylesheet', href='/styles/style.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
     script(src='/js/bootstrap.min.js')
-    script(src="/js/jquery.proxigram.js")
+    - if (app.settings.env == "development")
+      script(src="/js/jquery.proxigram.js")
+    - else 
+      script(src="http://s.proxigram.com/js/jquery.proxigram.js")
+      
   body
     header.container
       .row

@@ -34,6 +34,7 @@ a { color: @color; }
 }
 
 .block-wrapper {
+  margin-bottom: 24px;
   .section-header {
     font-variant: small-caps;
     text-transform: lowercase;
@@ -59,6 +60,7 @@ a { color: @color; }
   border-top: 1px solid #EEE;
   margin-top: 36px;
   padding-top: 18px;
+  margin-bottom: 36px;
   .footer-link {
     text-align: right;
   }
@@ -88,6 +90,31 @@ a { color: @color; }
   margin: 0 auto;
   .proxigram-image-wrapper {
     float: left;
+  }
+}
+
+/* DASHBOARD Stuff */
+
+.image-test {
+  .proxigram-photo-list {
+    width: 300px;
+    img {
+      width: 120px;
+    }
+    .proxigram-caption, .proxigram-meta {
+      display: none;
+    }
+    .proxigram-image-wrapper {
+      width: 120px;
+      height: 120px;
+      min-height: 120px;
+    }
+  }
+}
+
+.api-docs {
+  ul {
+    margin-top: 8px;
   }
 }
 

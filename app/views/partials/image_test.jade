@@ -1,0 +1,13 @@
+- if (typeof limit == 'undefined')
+  - limit = 5
+  
+div.row.proxigram-photo-list
+if (app.settings.env == "development")
+  endpoint = "http://proxigram.dev/api/photos";
+else
+  endpoint = "http://proxigram.com/api/photos";
+
+script(type='text/javascript')
+  jQuery(document).ready(function($){
+    $('.proxigram-photo-list').proxigram({api_endpoint: "!{endpoint}", limit: !{limit}, access_token: "!{current_user["api_key"]}"})
+  });

@@ -53,13 +53,16 @@
                   });
     }
     
+    function fireCallback(status_code, data) {
+      settings.complete != null && typeof settings.complete == 'function' && settings.complete(status_code, data);
+    }
+    
     $(that).empty();
     
     if (settings.include_default_styles === true) {
       var style_tag = $("<style type='text/css'>.proxigram-image-wrapper{min-height:210px;width:150px;padding:10px;margin: 5px;background-color:#eee;font-size:10px;line-height:13px;} .proxigram-image-wrapper, } .proxigram-image-wrapper img{ } .proxigram-comment-count:before {content: ' '} .proxigram-image-wrapper span { display: inline-block; width: 75px; } .proxigram-image-wrapper .proxigram-meta{margin-top: 8px;} .proxigram-image-wrapper .proxigram-comment-count{ text-align: right} .proxigram-caption{margin-top:8px;min-height:30px} </style>");
       $(that).append(style_tag);
     }
-    
     if (settings.access_token !== null) {
       $.ajax(finalUrlWithArguments(settings), {
         type: "GET",
@@ -74,8 +77,10 @@
         } else {
           that.append(createEmptyElment());
         }
+        fireCallback(success_code, data);
       }).fail(function(jqXHR, error_code, exception){
         that.append(createEmptyElment(error_code + ": " + exception));      
+        fireCallback(error_code, null);
       }).always(function(jqXHR, response_code){
         // no op
       });      

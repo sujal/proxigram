@@ -1,4 +1,5 @@
 var ImageList = mongoose.model("ImageList");
+var moment = require('moment');
 
 module.exports = function(app) {
   
@@ -26,8 +27,13 @@ module.exports = function(app) {
   });
   
   app.get('/users/refresh', ensureAuthenticated, function(req, res) {
-    ImageList.req.user
-    res.flash("info", "successfully enqueued a refresh");
-    res.redirect('/code');
+    ImageList.instagramPhotosForUser(req.user, {force_refresh: true}, function(err, imageList){
+      if (err) {
+        req.flash("error", "There was an error refreshing the feed.");
+      } else {
+        req.flash("info", "Successfully refreshed feed. New timestamp is: " + moment(imageList.updated_at).format('MM/DD/YYYY h:mm:ss a'));        
+      }
+      res.redirect('/code');      
+    });
   });
 }
