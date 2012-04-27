@@ -1,3 +1,5 @@
+@import "bootstrap.less";
+
 @color: red;
 a { color: @color; }
 
@@ -72,8 +74,21 @@ a { color: @color; }
 /* STEP 1 Stuff */
 
 .step1-content {
-  margin-top: 72px;
+  margin-top: 12px;
 }
 
 /* PHOTO stuff */
 
+.overflow-wrapper {
+  overflow: auto;
+}
+
+.proxigram-photo-list {
+  width: 900px;
+  margin: 0 auto;
+  .proxigram-image-wrapper {
+    float: left;
+  }
+}
+
+@import "prettify.less";

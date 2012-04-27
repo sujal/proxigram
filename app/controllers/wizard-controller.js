@@ -10,7 +10,7 @@ module.exports = function (app) {
   });
   
   app.get('/step2', ensureAuthenticated, function(req, res){
-    res.render('wizard/step2', { title: 'Step 2: Grab your JS and Go!' })
+    res.render('wizard/step2', { title: 'Step 2: Look at pretty photos' })
   });
 
 }

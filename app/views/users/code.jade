@@ -1,5 +1,18 @@
 .row
-  .span12
-    strong
-      | API Key:
-    = current_user.api_key
+  .span12.header-box
+    h2 Dashboard for !{current_user.displayName}
+.row
+  .span8
+    h3 API Key
+    p
+      strong Your API Key is: 
+      code !{current_user.api_key}
+  .span4
+    .block-wrapper.jquery-sample
+      .section-header
+        | jQuery Plugin
+      .section-content
+        .well
+
+    
+  

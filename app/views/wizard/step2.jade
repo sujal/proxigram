@@ -1,15 +1,21 @@
 .row
-  .offset2.span8.step1-content
+  .offset3.span6.step1-content
     h2
-      | Step 2: Grab the code and Go!
+      | Step 2: Check if it worked!
     p.spaced
       | You should see a line of images below if everything is working (give it a second)
+.row
+  .span12.overflow-wrapper
     div.row.proxigram-photo-list
-    p.spaced
-      | If you want to use the simple jQuery plugin, copy and paste the following code:
-    blockquote
-      = "<script type=\"text/javascript\" src=\"\" ></script>"
-
+.row
+  .offset3.span6.step1-content
+    h3
+      | Did it work?
+    p
+      a.btn.btn-large.btn-success(href="/code") Yes! Let's go!
+      &nbsp;
+      a.btn.btn-large.btn-inverse(href="/faq") No. Help me.
+    
 if (app.settings.env == "development")
   endpoint = "http://proxigram.dev/api/photos";
 else
