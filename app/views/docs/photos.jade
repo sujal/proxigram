@@ -1,0 +1,152 @@
+.row
+  .span12
+    h2
+      | Get latest photos
+      | 
+    p.spaced
+      | This is the primary (ok, the only) API method for this service.
+      | It returns a list of the latest photos. Optionally, it can include
+      | the raw JSON retrieved from the source API.
+    section.api-documentation
+      h4
+        span.header-label
+          | API Method: 
+        | /api/photos
+      table.method-arguments.table.table-striped.table-bordered
+        tr
+          th Parameter
+          th Description
+          th Default
+        tr
+          td.param-name.required
+            | access_token
+          td
+            | Your API key. You can find your key on your 
+            a(href="/code") dashboard.
+          td.muted none
+        tr
+          td.param-name limit
+          td Limit the number of images from the server. Maximum value is 30.
+          td 30
+        tr
+          td.param-name include_raw
+          td 
+            | Include the raw_json element containing the original response for each photo
+            | from the original source API. This is included per photo.
+          td no
+        tr
+          td.param-name force_refresh
+          td Forces the server to refresh the cache. (use sparingly)
+          td no
+    section.sample-output
+      h4
+        span.header-label
+          | JSON Response: 
+        | /api/photos
+    
+      pre.sample-output-block
+        code.prettyprint.linenums.lang-js.
+          {
+              "data":
+              {
+                  "_id":
+                  "4f9990a074e24e0100000010",
+                  "created_at":
+                  "2012-04-26T18:07:30.511Z",
+                  "images":
+                  [
+                  {
+                      "_id":
+                      "4f9af9d70588d001000000b7",
+                      "caption":
+                      "Might be time to step up the backups...",
+                      "comment_count":
+                      0,
+                      "content_type":
+                      "image",
+                      "created_at":
+                      "2012-04-27T19:55:12.135Z",
+                      "created_time":
+                      "2012-04-27T14:36:52.000Z",
+                      "filter":
+                      "X-Pro II",
+                      "images":
+                      {
+                          "low_resolution":
+                          {
+                              "height":
+                              306,
+                              "url":
+                              "http://distilleryimage6.instagram.com/6dd28e9c907611e1a92a1231381b6f02_6.jpg",
+                              "width":
+                              306
+                          },
+                          "standard_resolution":
+                          {
+                              "height":
+                              306,
+                              "url":
+                              "http://distilleryimage6.instagram.com/6dd28e9c907611e1a92a1231381b6f02_6.jpg",
+                              "width":
+                              306
+                          },
+                          "thumbnail":
+                          {
+                              "height":
+                              150,
+                              "url":
+                              "http://distilleryimage6.instagram.com/6dd28e9c907611e1a92a1231381b6f02_5.jpg",
+                              "width":
+                              150
+                          }
+                      },
+                      "likes_count":
+                      0,
+                      "link":
+                      "http://instagr.am/p/J7TsgNDfSq/",
+                      "raw_json":
+                      {
+                          // see Instagram documentation at http://instagram.com/developers
+                          ...
+                      },
+                      "source_id":
+                      "178823231330710698_875892",
+                      "source_user":
+                      {
+                          "bio":
+                          "Co-founder of VarioLabs, a startup that makes the news better.",
+                          "full_name":
+                          "Sujal Shah",
+                          "id":
+                          "875892",
+                          "profile_picture":
+                          "http://images.instagram.com/profiles/profile_875892_75sq_1321447890.jpg",
+                          "username":
+                          "sujal",
+                          "website":
+                          "http://variolabs.com"
+                      },
+                      "tags": [],
+                      "updated_at":
+                      "2012-04-27T19:56:07.641Z"
+                  },
+                  ...
+                  ],
+                  "provider":
+                  "instagram",
+                  "provider_user_id":
+                  "875892",
+                  "updated_at":
+                  "2012-04-27T19:56:07.655Z",
+                  "user_id":
+                  "4f998eea74e24e0100000002"
+              },
+              "meta":
+              200
+          }
+    
+script(src='/js/prettify.js')
+script(type="text/javascript")
+  jQuery(document).ready(function($){
+    prettyPrint();
+  });

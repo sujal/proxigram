@@ -14,4 +14,8 @@ module.exports = function(app) {
     })
   });
   
+  app.get('/admin(/index)?', ensureAuthenticated, ensureAdmin, function(req, res){
+    res.render('admin/index', { title: "Admin Section" });    
+  });
+  
 }
