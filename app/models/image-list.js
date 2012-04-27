@@ -68,6 +68,7 @@ ImageList.statics.refreshInstagramFeedForUserImageList = function(user, imageLis
           var nimage = new NormalizedImage();
           nimage.populateFromMediaData(data[i]);
           imageList.images.push(nimage);          
+          console.log("pushed " + nimage.caption);
         };
         
         imageList.save(function(err){

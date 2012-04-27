@@ -1,3 +1,5 @@
+var ImageList = mongoose.model("ImageList");
+
 module.exports = function(app) {
   
   app.get('/auth/instagram',
@@ -21,5 +23,11 @@ module.exports = function(app) {
   
   app.get('/code', ensureAuthenticated, function(req, res) {
     res.render('users/code', { title: 'Your Dashboard' })
+  });
+  
+  app.get('/users/refresh', ensureAuthenticated, function(req, res) {
+    ImageList.req.user
+    res.flash("info", "successfully enqueued a refresh");
+    res.redirect('/code');
   });
 }

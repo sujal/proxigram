@@ -12,16 +12,18 @@ module.exports = function(app) {
       var user = req.user
       var force_refresh = req.param("force_refresh", "false") == "true";
       ImageList.instagramPhotosForUser(user, {force_refresh: force_refresh}, function(err, imageList){
+        var outputObj = imageList.toObject();
+        
         var limit = Number(req.param("limit", "30"));
-        if (limit < imageList.images.length) {
-          imageList.images.splice(limit,imageList.images.length-limit);
+        if (limit < outputObj.images.length) {
+          outputObj.images.splice(limit,outputObj.images.length-limit);
         }
         if (req.param("include_raw", "no") == "no") {
-          for (var i = imageList.images.length - 1; i >= 0; i--){
-            imageList.images[i].raw_json = undefined;
+          for (var i = outputObj.images.length - 1; i >= 0; i--){
+            outputObj.images[i].raw_json = undefined;
           }          
         }
-        res.send({meta: 200, data: imageList}, 200);
+        res.send({meta: 200, data: outputObj}, 200);
       });
     }
   );
