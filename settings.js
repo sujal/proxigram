@@ -39,7 +39,18 @@ passport.use(new InstagramStrategy({
       
       User.findOne({instagram_id: profile.id}, function(err, user){
         if (user) {
-          done(null, user);
+          
+          // if the accessToken != the existing token, update the record
+          if (user.oauth_token != accessToken) {
+            user.oauth_token = accessToken;
+            user.save(function(err){
+              if (err) { throw err }
+              done(null, user);
+            })
+          } else {
+            done(null, user);            
+          }
+          
         } else {
           var new_user = new User();
           new_user.provider = "instagram";

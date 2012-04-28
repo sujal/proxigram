@@ -3,29 +3,48 @@
     h2 Dashboard for !{current_user.displayName}
 .row
   .span8
-    .block-wrapper
-      .section-header API Key
-      .section-content
-        p.spaced
-          strong Your API Key is: 
-          code !{current_user.api_key}
     .row
-      .span4
+      .span5
         .block-wrapper.api-docs
           .section-header
-            | Documentation
+            | Using Proxigram
           .section-content
-            strong API Methods
+            p
+              | Proxigram is a simple API service that gives you a simple
+              | way to get your Instagram photos on your web site without
+              | having to run code on the server or store your OAuth credentials
+              | in the source of a web page. 
+            P
+              | This screen contains the documentation to get you started with the
+              | API as well as our simple jQuery plugin.
+      .span3
+        .block-wrapper.api-docs
+          .section-header
+            | Documentation & Source
+          .section-content
+            p 
+              strong API Methods
             ul
               li
                 a(href="/docs/photos") /api/photos
+            p 
+              strong Source: 
+              small
+                | (This is all open source!)
+            ul
+              li
+                a(href="https://github.com/sujal/proxigram") Proxigram on Github
+              li
+                a(href="https://github.com/sujal/jquery-proxigram") jquery.proxigram.js
             
-      .span4
-        .block-wrapper.toolbox
-          .section-header
-            | Tools
+    .row
+      .span8
+        .block-wrapper
+          .section-header API Key
           .section-content
-            a.btn.btn-mini.btn-primary(href="/users/refresh") Refresh Instagram
+            p.spaced
+              strong Your API Key is: 
+              code !{current_user.api_key}
     .row
       .span8
         .block-wrapper.jquery-sample
@@ -79,10 +98,18 @@
         
 
   .span4
+    .block-wrapper.toolbox
+      .section-header
+        | Tools
+      .section-content
+        a.btn.btn-mini.btn-primary(href="/users/refresh") Refresh Instagram
+  
     .block-wrapper.image-test
       .section-header
-        | Recent Images
+        | Recent Images 
       .section-content
+        .centered
+          span.refreshed-date
         !=partial('partials/image_test', {limit: 10})
     
 
