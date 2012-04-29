@@ -151,4 +151,22 @@ a { color: @color; }
   font-weight: bold;
 }
 
+/* RESPONSIVE */
+
+@media (max-width: 767px) {
+  .hero-unit h1 {
+    font-size: 36px;
+    letter-spacing: inherit;
+  }
+  .header-link {
+    text-align: left;
+  }
+  .footer {
+    text-align: center;
+    .footer-link {
+      text-align: center;
+    }
+  }
+} 
+
 @import "prettify.less";
