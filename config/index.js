@@ -3,6 +3,10 @@ config = {
     client_id: process.env.INSTAGRAM_CLIENT_ID
     , client_secret: process.env.INSTAGRAM_CLIENT_SECRET
   },
+  flickr: {
+    api_key: process.env.FLICKR_API_KEY,
+    api_secret: process.env.FLICKR_API_SECRET
+  }
   db: {
     uri: process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development"
   },
