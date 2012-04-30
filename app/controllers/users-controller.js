@@ -3,6 +3,12 @@ var moment = require('moment');
 
 module.exports = function(app) {
   
+  // Conventions are as follows:
+  // /auth/* routes are used for *creating* accounts and *login*
+  // /connect/* routes are used for *adding* connections to existing accounts.
+  //            This call requires login to make the connection.
+  
+  /* INSTAGRAM calls */
   app.get('/auth/instagram',
     passport.authenticate('instagram', {successFlash: true, failureFlash: true}),
     function(req, res){
@@ -21,6 +27,14 @@ module.exports = function(app) {
     req.flash('info', 'You have been successfully logged out.');
     res.redirect('/');
   });
+  
+  
+  
+  
+  
+  
+  
+  
   
   app.get('/code', ensureAuthenticated, function(req, res) {
     res.render('users/code', { title: 'Your Dashboard' })
