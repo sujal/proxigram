@@ -6,7 +6,7 @@ config = {
   flickr: {
     api_key: process.env.FLICKR_API_KEY,
     api_secret: process.env.FLICKR_API_SECRET
-  }
+  },
   db: {
     uri: process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development"
   },
