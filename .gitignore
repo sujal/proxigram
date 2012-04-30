@@ -4,3 +4,4 @@ public/styles/*.css
 
 *.tmproj
 setup_env.sh
+.env
