@@ -103,11 +103,12 @@ function bootApplication(app) {
     app.set('view engine', 'jade');
     app.set('view options', { layout: 'layouts/default' });
     app.set('jsonp callback', true);
-    app.use(lessMiddleware({
-            src: __dirname + '/public',
-            compress: true
-        }));
-        
+    // app.use(lessMiddleware({
+    //         src: __dirname + '/public',
+    //         compress: true
+    //     }));
+    app.use(require('connect-assets')());
+    
     // HACKY middleware to bring req.rawBody back since
     // Instagram-node-lib requires it. Will fix that lib
     // soon.
