@@ -42,10 +42,16 @@ module.exports = function(app) {
               // means that everything has returned
               console.log("saved "+user.tokens.instagram.display_name);
               res.send({meta: 200, data: names}, 200);
+              return;
             }
           });
         } else {
+          total--;
           console.log("account already migrated (or at least had something in the tokens collection)");
+          // special case if there's only one user
+          if (total <= 0) {
+            res.send({meta: 200, data: names}, 200);
+          }
         }
       };
     });
