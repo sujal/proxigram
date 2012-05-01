@@ -23,6 +23,10 @@ ImageList.index({ provider: 1, provider_user_id: 1 }, { unique: true })
 
 ImageList.plugin(simpleTimestamps);
 
+ImageList.statics.photosForUser = function(user, options, cb) {
+  // TBD
+}
+
 ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
   
   if ('function' == typeof options) {
@@ -37,15 +41,8 @@ ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
     if (err == null) {
       if ( imageList == null || moment().diff(moment(imageList.updated_at)) > 86400000 || options.force_refresh === true ) {
         // didn't find it or it's old, call Instagram!
-        if (imageList == null) {
-          imageList = new myClass();
-          imageList.provider = "instagram";
-          imageList.user_id = user.id;
-          imageList.provider_user_id = user.instagram_id;
-        }
-
-        myClass.refreshInstagramFeedForUserImageList(user, imageList, cb);
-
+        myClass.refreshInstagramFeedForUser(user, cb)
+      
       } else {
         cb(null, imageList);
       } 
@@ -55,39 +52,96 @@ ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
   });
 }
 
-ImageList.statics.refreshInstagramFeedForUserImageList = function(user, imageList, cb) {
-  
-  Instagram.users.recent({ count: 30, user_id: user.instagram_id, access_token: user.oauth_token,
-    complete: function(data, pagination){
-      console.log("instagram call complete, data count is "+data.length);
-      if (data != null) {
-        
-        var new_images = [];        
-        for (var i=0; i < data.length; i++) {
-          var nimage = new NormalizedImage();
-          nimage.populateFromMediaData(data[i]);
-          new_images.push(nimage);
-          // console.log("pushed " + nimage.caption);
-        };
 
-        imageList.set("images", new_images);
-        
-        imageList.save(function(err){
-          if (!err) 
-          { 
-            cb(null, imageList); 
-          } else {
-            console.log("there was an error: " + err); 
-            cb(err, null) ;
-          }
-        });
+ImageList.statics.refreshFeedsForUser = function(user, cb) {
+  
+  for(var provider in user.tokens) {
+
+    var service_token = user.tokens[provider];
+    
+    if (service_token != null) {
+
+      var refresh_func = null;
+
+      switch (provider) {
+        case "instagram":
+          refresh_func = ImageList.refreshInstagramFeedForUser;
+          break;
+        case "flickr":
+          refresh_func = ImageList.refreshFlickrFeedForUser;
+          break;
+        case "facebook":
+          refresh_func = ImageList.refreshFacebookFeedForUser;
+          break;
+        default:
+          console.log("No matching source found for " + service_token.provider);
       }
-    },
-    error: function(errorMessage, errorObject, caller) {
-      console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
-      cb(errorMessage, null);
+
+      refresh_func(user, function(err, imageList) {
+
+      });
+      
+    }
+  };
+  
+}
+
+ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
+
+  var myClass = this;
+
+  this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
+    if (err == null) {
+      if (imageList == null) {
+        imageList = new myClass();
+        imageList.provider = "instagram";
+        imageList.user_id = user.id;
+        imageList.provider_user_id = user.instagram_id;
+      }
+
+      Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
+        complete: function(data, pagination){
+          console.log("instagram call complete, data count is "+data.length);
+          if (data != null) {
+
+            var new_images = [];        
+            for (var i=0; i < data.length; i++) {
+              var nimage = new NormalizedImage();
+              nimage.populateFromInstagramMediaData(data[i]);
+              new_images.push(nimage);
+            };
+
+            imageList.set("images", new_images);
+
+            imageList.save(function(err){
+              if (!err) 
+              { 
+                cb(null, imageList); 
+              } else {
+                console.log("there was an error: " + err); 
+                cb(err, null) ;
+              }
+            });
+          }
+        },
+        error: function(errorMessage, errorObject, caller) {
+          console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
+          cb(errorMessage, null);
+        }
+      });
+      
+      // cb(null, imageList);
+    } else {
+      cb(err, imageList);
     }
   });
+}
+
+ImageList.statics.refreshFlickrFeedForUser = function(user, cb) {
+  
+}
+
+ImageList.statics.refreshFacebookFeedForUser = function(user, cb) {
   
 }
 

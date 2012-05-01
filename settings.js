@@ -28,6 +28,8 @@ exports.boot = function(app) {
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Instagram
 //   profile), and invoke a callback with a user object.
+
+// This is the LOGIN version, not the connect version.
 passport.use(new InstagramStrategy({
     clientID: config.instagram.client_id,
     clientSecret: config.instagram.client_secret,
@@ -37,20 +39,25 @@ passport.use(new InstagramStrategy({
     // asynchronous verification, for effect...
     process.nextTick(function () {
       
-      User.findOne({instagram_id: profile.id}, function(err, user){
+      User.findOne({"tokens.instagram.account_id": profile.id}, function(err, user){
         if (user) {
-          
           // if the accessToken != the existing token, update the record
-          if (user.oauth_token != accessToken) {
-            user.oauth_token = accessToken;
+          var service_token = user.tokens.instagram;
+          if (service_token == null) {
+            throw new Error("Unexpected scenario - found user, but no matching token for Instagram provider. Unpossible!");
+          }
+          
+          // pass by reference, basically, means this works without re-setting it.
+          if (service_token.token != accessToken) {
+            service_token.token = accessToken;
             user.save(function(err){
               if (err) { throw err }
               done(null, user);
             })
           } else {
-            done(null, user);            
+            done(null, user);
           }
-          
+
         } else {
           var new_user = new User();
           new_user.provider = "instagram";
@@ -63,6 +70,14 @@ passport.use(new InstagramStrategy({
           new_user.external_counts.instagram = profile._json.data.counts;
           new_user.profile_picture = profile._json.data.profile_picture;
           new_user.oauth_token = accessToken;
+          
+          
+          new_user.tokens.instagram = {
+            token: accessToken,
+            display_name: profile.displayName,
+            account_id: profile.id
+          }
+          
           new_user.save(function(err){
             if (err) { throw err; }
             done(null, new_user);
