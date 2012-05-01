@@ -102,7 +102,42 @@
       .section-header
         | Tools
       .section-content
-        a.btn.btn-mini.btn-primary(href="/users/refresh") Refresh Instagram
+        .row
+          .span4
+            .row
+              .span2.tool-label
+                strong Instagram:
+              .span2.tool-item
+                - if (current_user.tokens.instagram.account_id !== null)
+                  a(href="") Disconnect
+                - else
+                  a(href="") Connect Account
+            .row
+              .span2.tool-label
+                strong Flickr:
+              .span2.tool-item
+                - if (current_user.tokens.flickr.account_id !== null)
+                  a(href="") Disconnect
+                - else
+                  a(href="") Connect Account
+              
+            .row
+              .span2.tool-label
+                strong Facebook:
+              .span2.tool-item
+                - if (current_user.tokens.facebook.account_id !== null)
+                  a(href="") Disconnect
+                - else
+                  a(href="") Connect Account
+            .row
+              .span4.spacer
+                &nbsp;
+            .row
+              .span2.tool-label
+                strong &nbsp;
+              .span2.tool-item
+                a.btn.btn-mini.btn-primary(href="/users/refresh") Refresh All Feeds
+            
   
     .block-wrapper.image-test
       .section-header
