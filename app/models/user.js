@@ -8,6 +8,22 @@ var generateAPIKey = function(spec) {
   return crypto.createHash(method).update(crypto.randomBytes(bytes)).digest(encoding);
 }
 
+var ServiceToken = {
+  token: {
+    type: String,
+    trim: true
+  },
+  account_id: {
+    type: String,
+    trim: true
+  },
+  display_name: {
+    type: String,
+    trim: true
+  },
+  raw_metadata: {}
+}
+
 var User = new mongoose.Schema({
   instagram_id: {
     type: String,
@@ -75,6 +91,11 @@ var User = new mongoose.Schema({
     type: String,
     trim: true
   },
+  tokens: {
+    instagram: ServiceToken,
+    flickr: ServiceToken,
+    facebook: ServiceToken
+  },
   notification_at: {
     type: Date
   },
@@ -94,8 +115,23 @@ var User = new mongoose.Schema({
   }
 });
 
+User.index({"tokens.instagram.account_id": 1}, {unique: true, sparse: true});
+User.index({"tokens.flickr.account_id": 1}, {unique: true, sparse: true});
+User.index({"tokens.facebook.account_id": 1}, {unique: true, sparse: true});
+
+
 User.plugin(simpleTimestamps);
 
 User.methods.generateAPIKey = generateAPIKey;
+User.methods.token_for_provider_id = function(provider_name, provider_account_id) {
+
+  for (var i = this.tokens[provider_name].length - 1; i >= 0; i--){
+    var service_token = this.tokens[provider_name][i];
+    if (service_token.account_id == provider_account_id) {
+      return service_token;
+    }
+  };
+  return null;
+}
 
 mongoose.model('User', User);

@@ -64,7 +64,7 @@ var NormalizedImage = new mongoose.Schema({
 
 NormalizedImage.plugin(simpleTimestamps);
 
-NormalizedImage.methods.populateFromMediaData = function(media_data)  {
+NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.raw_json = media_data;
 
   if (media_data.caption != null) {

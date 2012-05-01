@@ -22,7 +22,7 @@ module.exports = function (app) {
       for (var i=0; i < notifications.length; i++) {
         var update = notifications[i];
         if (update["object"] == "user" && update["changed_aspect"] == "media") {
-          User.findOne({instagram_id: update["object_id"]}, function(err, user){
+          User.findOne({"tokens.instagram.account_id": update["object_id"]}, function(err, user){
             if (err == null) {
               ImageList.instagramPhotosForUser(user, {force_refresh: true}, function(err, imageList){
                 if (err == null) {
