@@ -109,26 +109,26 @@
                 strong Instagram:
               .span2.tool-item
                 - if (current_user.tokens.instagram.account_id !== null)
-                  a(href="") Disconnect
+                  a(href="https://instagram.com/accounts/manage_access#client_proxigram") Disconnect
                 - else
-                  a(href="") Connect Account
+                  a(href="/connect/instagram") Connect Account
             .row
               .span2.tool-label
                 strong Flickr:
               .span2.tool-item
                 - if (current_user.tokens.flickr.account_id !== null)
-                  a(href="") Disconnect
+                  a(href="http://www.flickr.com/services/auth/list.gne?from=extend") Disconnect
                 - else
-                  a(href="") Connect Account
+                  a(href="/connect/flickr") Connect Account
               
             .row
               .span2.tool-label
                 strong Facebook:
               .span2.tool-item
                 - if (current_user.tokens.facebook.account_id !== null)
-                  a(href="") Disconnect
+                  a(href="https://www.facebook.com/settings?tab=applications") Disconnect
                 - else
-                  a(href="") Connect Account
+                  a(href="/connect/facebook") Connect Account
             .row
               .span4.spacer
                 &nbsp;

@@ -10,6 +10,8 @@
     , "passport": ">= 0.1.8"
     , "passport-instagram": ">= 0.1.1"
     , "passport-http-bearer": ">= 0.1.2"
+    , "passport-flickr": ">= 0.0.1"
+    , "passport-facebook": ">= 0.0.1"
     , "mongoose": ">= 2.5.0"
     , "connect": ">= 0.0.1 < 2"
     , "connect-redis": ">= 1.0.0"
@@ -19,7 +21,6 @@
     , "instagram-node-lib": ">=0.0.7"
     , "express-messages-bootstrap": "git://github.com/sujal/express-messages-bootstrap.git#bootstrap2.0"
     , "flickrnode": "git://github.com/donnierayjones/flickrnode.git"
-    , "passport-flickr": ">= 0.0.1"
   }
   , "engines": {
       "node": "0.6.x"

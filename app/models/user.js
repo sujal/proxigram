@@ -1,6 +1,6 @@
 var crypto = require("crypto");
 
-var generateAPIKey = function(spec) {
+var generate_api_key = function(spec) {
   if (spec == null) { spec = {} };
   var method = spec.method || "sha1";
   var encoding = spec.encoding || "hex";
@@ -71,6 +71,11 @@ var User = new mongoose.Schema({
     type: String,
     trim: true
   },
+  emails: [{}],
+  gender: {
+    type: String,
+    trim: true
+  },
   external_counts: {
     instagram: {
       media: {
@@ -107,7 +112,7 @@ var User = new mongoose.Schema({
     type: String,
     unique: true,
     trim: true,
-    default: generateAPIKey
+    default: generate_api_key
   },
   admin: {
     type: Boolean,
@@ -122,16 +127,30 @@ User.index({"tokens.facebook.account_id": 1}, {unique: true, sparse: true});
 
 User.plugin(simpleTimestamps);
 
-User.methods.generateAPIKey = generateAPIKey;
-User.methods.token_for_provider_id = function(provider_name, provider_account_id) {
+// Public: Used to generate an API key for the user. Done on create or if the key is cleared
+//         because it is set as the default function for api_key.
+//
+// Examples: 
+//            user.api_key = user.generate_api_key();
+//
+// Returns: a string containing the API Key
+User.methods.generate_api_key = generate_api_key;
 
-  for (var i = this.tokens[provider_name].length - 1; i >= 0; i--){
-    var service_token = this.tokens[provider_name][i];
-    if (service_token.account_id == provider_account_id) {
-      return service_token;
-    }
-  };
-  return null;
-}
+// Public: Disconnect from oauth by removing the entry for the provider name.
+//
+// provider_name: the name of the provider as used in the tokens array
+// cb: callback - takes the arguments (err, user)
+//
+// Examples:
+//            user.disconnect_oauth("instagram", function(err, user){ ... });
+//  
+// Returns: via callback, a user.
+User.methods.disconnect_oauth = function (provider_name, cb) {
+  this[provider_name] = {};
+  this.save(function(err){
+    if (err) throw err;
+    cb(null, this);
+  })
+};
 
 mongoose.model('User', User);

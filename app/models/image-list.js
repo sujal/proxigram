@@ -90,51 +90,55 @@ ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
 
   var myClass = this;
 
-  this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
-    if (err == null) {
-      if (imageList == null) {
-        imageList = new myClass();
-        imageList.provider = "instagram";
-        imageList.user_id = user.id;
-        imageList.provider_user_id = user.instagram_id;
-      }
-
-      Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
-        complete: function(data, pagination){
-          console.log("instagram call complete, data count is "+data.length);
-          if (data != null) {
-
-            var new_images = [];        
-            for (var i=0; i < data.length; i++) {
-              var nimage = new NormalizedImage();
-              nimage.populateFromInstagramMediaData(data[i]);
-              new_images.push(nimage);
-            };
-
-            imageList.set("images", new_images);
-
-            imageList.save(function(err){
-              if (!err) 
-              { 
-                cb(null, imageList); 
-              } else {
-                console.log("there was an error: " + err); 
-                cb(err, null) ;
-              }
-            });
-          }
-        },
-        error: function(errorMessage, errorObject, caller) {
-          console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
-          cb(errorMessage, null);
+  if (user.token.instagram.token != null) {
+    this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
+      if (err == null) {
+        if (imageList == null) {
+          imageList = new myClass();
+          imageList.provider = "instagram";
+          imageList.user_id = user.id;
+          imageList.provider_user_id = user.instagram_id;
         }
-      });
-      
-      // cb(null, imageList);
-    } else {
-      cb(err, imageList);
-    }
-  });
+
+        Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
+          complete: function(data, pagination){
+            console.log("instagram call complete, data count is "+data.length);
+            if (data != null) {
+
+              var new_images = [];        
+              for (var i=0; i < data.length; i++) {
+                var nimage = new NormalizedImage();
+                nimage.populateFromInstagramMediaData(data[i]);
+                new_images.push(nimage);
+              };
+
+              imageList.set("images", new_images);
+
+              imageList.save(function(err){
+                if (!err) 
+                { 
+                  cb(null, imageList); 
+                } else {
+                  console.log("there was an error: " + err); 
+                  cb(err, null) ;
+                }
+              });
+            }
+          },
+          error: function(errorMessage, errorObject, caller) {
+            console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
+            cb(errorMessage, null);
+          }
+        });
+
+        // cb(null, imageList);
+      } else {
+        cb(err, imageList);
+      }
+    });    
+  } else {
+    cb(new Error("unable to refresh: user is not connected to an Instagram account"), null);
+  }
 }
 
 ImageList.statics.refreshFlickrFeedForUser = function(user, cb) {

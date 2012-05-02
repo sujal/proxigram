@@ -1,0 +1,25 @@
+Login:
+  - If token not found, create account
+  - If token found, log in
+  (creates a user record, and that's what's used in the session)
+  
+If you try and authorize a account:
+  - check if it's already part of a user account
+  - make sure it's the same as the logged in user. If not, throw error.
+  
+-----
+
+Multiple account support:
+
+From the user side, List all sources for refresh
+
+Refresh includes provider + account_id
+
+
+
+
+
+
+
+
+

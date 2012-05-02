@@ -40,6 +40,23 @@ module.exports = function(app) {
     function(req, res) {
       res.redirect('/step2');
     });
+
+  app.get('/connect/instagram',
+    passport.authorize('instagram', {failureRedirect: '/code', successFlash: true, failureFlash: true}),
+    function(req, res){
+      // The request will be redirected to Twitter for authentication, so this
+      // function will not be called.
+    });
+
+  app.get('/connect/instagram/callback', 
+    passport.authorize('instagram', { failureRedirect: '/code', successFlash: true, failureFlash: true }),
+    function(req, res) {
+
+    });
+  
+  app.get('/auth/instagram/disconnect', ensureAuthenticated, function(req, res){
+    req.user.disconnect("instagram");
+  });
     
   app.get('/logout', function(req, res){
     req.logout();
