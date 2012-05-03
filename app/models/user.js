@@ -13,6 +13,10 @@ var ServiceToken = {
     type: String,
     trim: true
   },
+  token_secret: {
+    type: String,
+    trim: true
+  },
   account_id: {
     type: String,
     trim: true
@@ -39,7 +43,7 @@ var User = new mongoose.Schema({
   provider: {
     type: String,
     trim: true,
-    enum: ["instagram"]
+    enum: ["instagram", "flickr", "facebook"]
   },
   displayName: {
     type: String,
@@ -152,5 +156,36 @@ User.methods.disconnect_oauth = function (provider_name, cb) {
     cb(null, this);
   })
 };
+
+// Public: create and set a service_token entry for the current user
+//         based on the profile and accessToken sent in. Will overwrite
+//         any previously set service token.
+//
+// provider: the name of the provider as used in the tokens array
+// profile: the user profile object from the passport strategy
+// accessToken: the token from the oAuth callback
+//
+// Examples:
+//            user.set_token_from_profile("instagram", {...}, "1234567890");
+//  
+// Returns: nothing.
+User.methods.set_token_from_profile = function(provider, profile, accessToken) {
+  var token_secret = null;
+  if (arguments.length == 4) {
+    token_secret = arguments[3];
+  }
+    
+  this.tokens[provider] = {
+    token: accessToken,
+    token_secret: token_secret,
+    display_name: profile.displayName,
+    account_id: profile.id,
+    raw_metadata: profile._json
+  }
+}
+
+// Public: offers a virtual to indicate whether user should go to verify
+//         step or directly to dashboard
+User.virtual('needs_verification')
 
 mongoose.model('User', User);

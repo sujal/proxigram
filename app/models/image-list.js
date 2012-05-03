@@ -7,7 +7,7 @@ var ImageList = new mongoose.Schema({
   provider: {
     type: String,
     trim: true,
-    enum: ["instagram"]
+    enum: ["instagram", "flickr", "facebook"]
   },
   user_id: Schema.ObjectId,
   provider_user_id: {
@@ -90,7 +90,7 @@ ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
 
   var myClass = this;
 
-  if (user.token.instagram.token != null) {
+  if (user.tokens.instagram.token != null) {
     this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
       if (err == null) {
         if (imageList == null) {

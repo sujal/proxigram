@@ -31,6 +31,7 @@ function bootApplication(app) {
     app.set('view engine', 'jade');
     app.set('view options', { layout: 'layouts/default' });
     app.set('jsonp callback', true);
+    app.use(express.favicon(__dirname + '/public/favicon.ico', { maxAge: 2592000000 }));
     // app.use(lessMiddleware({
     //         src: __dirname + '/public',
     //         compress: true
@@ -55,7 +56,6 @@ function bootApplication(app) {
     app.use(passport.session());
     app.use(express.static(__dirname + '/public', {maxAge: 86400000}));
     app.use(express.logger(':method :url :status'));
-    app.use(express.favicon());
     app.use(app.router);
   });
   

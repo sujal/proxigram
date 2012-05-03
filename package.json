@@ -4,6 +4,7 @@
   , "private": true
   , "dependencies": {
       "express": "2.5.8"
+    , "underscore": ">=0.0.1"
     , "jade": ">= 0.0.1"
     , "less": ">=1.3.0"
     , "moment": ">= 0.0.1"
