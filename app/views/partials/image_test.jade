@@ -10,11 +10,10 @@ else
 script(type='text/javascript')
   jQuery(document).ready(function($){
     $('.proxigram-photo-list').proxigram({api_endpoint: "!{endpoint}", limit: !{limit}, access_token: "!{current_user["api_key"]}",
-    complete: function(status_code, data){
-      console.log(status_code + " " + data);
+      complete: function(status_code, data){
         if (status_code == "success" && data != null && data.data != undefined) {
           $(".refreshed-date").text("Last update: " + moment(data.data.updated_at,"YYYY-MM-DDTHH:mm:ssZ").format('MM/DD/YYYY h:mm:ss Z'));
         }
       }
-    })
+    });
   });
