@@ -13,7 +13,7 @@ script(type='text/javascript')
     complete: function(status_code, data){
       console.log(status_code + " " + data);
         if (status_code == "success" && data != null && data.data != undefined) {
-          $(".refreshed-date").text("Last update: " + moment(data.data.updated_at).format('MM/DD/YYYY HH:mm:ss Z'));
+          $(".refreshed-date").text("Last update: " + moment(data.data.updated_at,"YYYY-MM-DDTHH:mm:ssZ").format('MM/DD/YYYY h:mm:ss Z'));
         }
       }
     })
