@@ -10,7 +10,7 @@ module.exports = function (app) {
   });
   
   // this is where Instagram will send updates (using POST)
-  app.post('/facebook/realtime', PuSHHelper.verifier(config.facebook.app_secret), function(req, res){
+  app.post('/facebook/realtime', PuSHHelper.check_signature, function(req, res){
     
   });
 }
