@@ -22,6 +22,8 @@
     , "instagram-node-lib": ">=0.0.7"
     , "express-messages-bootstrap": "git://github.com/sujal/express-messages-bootstrap.git#bootstrap2.0"
     , "flickrnode": "git://github.com/donnierayjones/flickrnode.git"
+    , "fbgraph": "git://github.com/sujal/fbgraph.git#aliem_prototypal"
+    , "node-push-helper": "git://github.com/sujal/node-push-helper.git"
   }
   , "engines": {
       "node": "0.6.x"
