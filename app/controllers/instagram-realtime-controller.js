@@ -10,7 +10,7 @@ module.exports = function (app) {
   });
   
   // this is where Instagram will send updates (using POST)
-  app.post('/instagram/realtime', PuSHHelper.verifier(config.instagram.client_secret), function(req, res){
+  app.post('/instagram/realtime', PuSHHelper.check_signature, function(req, res){
     console.log("Received & verified a notification");
     
     // loop through incoming updates and ping the API to update

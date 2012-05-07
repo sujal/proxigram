@@ -6,7 +6,8 @@ var express = require('express')
   , mongoose = require('mongoose')
   , connect = require('connect')
   , HerokuRedisStore = require('connect-heroku-redis')(connect)
-  , lessMiddleware = require('less-middleware');
+  , lessMiddleware = require('less-middleware')
+  , PuSHHelper = require('node-push-helper').PuSHHelper;
 
 var User = mongoose.model('User');
 
@@ -42,12 +43,15 @@ function bootApplication(app) {
     // Instagram-node-lib requires it. Will fix that lib
     // soon.
     // This taken from here: https://github.com/visionmedia/express/issues/897
-    app.use (function(req, res, next) {
-        req.rawBody = '';
-        req.setEncoding('utf8');
-        req.on('data', function(chunk) { req.rawBody += chunk });
-        next();
-    });
+    // app.use (function(req, res, next) {
+    //     req.rawBody = '';
+    //     req.setEncoding('utf8');
+    //     req.on('data', function(chunk) { req.rawBody += chunk });
+    //     next();
+    // });
+    app.use(PuSHHelper.signature_calculator(config.instagram.client_secret, "/instagram"));
+    app.use(PuSHHelper.signature_calculator(config.flickr.api_secret, "/flickr"));
+    app.use(PuSHHelper.signature_calculator(config.facebook.app_secret, "/facebook"));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
