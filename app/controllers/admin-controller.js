@@ -5,7 +5,7 @@ var User = mongoose.model("User");
 module.exports = function(app) {
   
   app.get('/admin/instagram/subscribe', ensureAuthenticated, ensureAdmin, function(req, res){
-    ImageList.subscribeForUserNotifications(function(err, data){
+    ImageList.subscribeForUserNotifications("instagram", function(err, data){
       if (err == null) {
         console.log("SUBSCRIBED: " + data );        
       } else {
@@ -13,6 +13,23 @@ module.exports = function(app) {
       }
       res.render('admin/instagram/subscribe', { err: err, data: util.inspect(data), title: "Activate Instagram Subs" });
     })
+  });
+
+  // flickr has a per user subscribe call, so this doesn't make sense (or can't
+  // use the same branching logic)
+  // app.get('/admin/flickr/subscribe', ensureAuthenticated, ensureAdmin, function(req, res){
+
+  app.get('/admin/facebook/subscribe', ensureAuthenticated, ensureAdmin, function(req, res){
+    
+    ImageList.subscribeForUserNotifications("facebook", function(err, data){
+      if (err == null) {
+        console.log("SUBSCRIBED: " + data );        
+      } else {
+        console.log("SUBSCRIBE FAIL: " + err + "\n" + util.inspect(data) + "\n" );                
+      }
+      res.render('admin/instagram/subscribe', { err: err, data: util.inspect(data), title: "Activate Facebook Subs" });
+    })
+    
   });
   
   app.get('/admin(/index)?', ensureAuthenticated, ensureAdmin, function(req, res){

@@ -1,6 +1,8 @@
 require('./normalized-image');
 
-var moment = require('moment');
+var moment = require('moment'),
+    Flickr = require('flickr').Flickr;
+    
 var NormalizedImage = mongoose.model('NormalizedImage');
 
 var ImageList = new mongoose.Schema({
@@ -149,7 +151,29 @@ ImageList.statics.refreshFacebookFeedForUser = function(user, cb) {
   
 }
 
-ImageList.statics.subscribeForUserNotifications = function (cb) {
+ImageList.statics.subscribeForUserNotifications = function (provider, cb) {
+  var subscribeFunc = null;
+  switch (provider) {
+      case "instagram":
+        subscribeFunc = ImageList.subscribeForInstagramUserNotifications;
+        break;
+        // flickr is commented out because it's different - see comments below.
+      // case "flickr":
+      //   subscribeFunc = ImageList.subscribeForFlickrUserNotifications;
+      //   break;
+      case "facebook":
+        subscribeFunc = ImageList.subscribeForFacebookUserNotifications;
+        break;
+      default:
+        console.log("No matching source found for " + provider);
+    }
+    
+    if (subscribeFunc != null) {
+      subscribeFunc(cb);
+    }
+};
+
+ImageList.statics.subscribeForInstagramUserNotifications = function (cb) {
   Instagram.users.subscribe({
     complete: function(data, pagination) {
       cb(null, data);
@@ -158,6 +182,15 @@ ImageList.statics.subscribeForUserNotifications = function (cb) {
       cb(errorMessage, errorObject);
     }
   });
-}
+};
+
+// Flickr uses per-user subscribe settings - this won't work right.
+// ImageList.statics.subscribeForFlickrUserNotifications = function (cb) {
+//   
+//   var client = new Flickr(process.env.FLICKR_API_KEY, process.env.FLICKR_API_SECRET);
+// };
+
+ImageList.statics.subscribeForFacebookUserNotifications = function (cb) {
+};
 
 mongoose.model('ImageList', ImageList);
