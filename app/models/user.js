@@ -1,4 +1,5 @@
-var crypto = require("crypto");
+var crypto = require("crypto"),
+  Flickr = require('flickr').Flickr;
 
 var generate_api_key = function(spec) {
   if (spec == null) { spec = {} };
@@ -24,6 +25,10 @@ var ServiceToken = {
   display_name: {
     type: String,
     trim: true
+  },
+  subscribed: {
+    type: Boolean,
+    default: false
   },
   raw_metadata: {}
 }
@@ -180,12 +185,36 @@ User.methods.set_token_from_profile = function(provider, profile, accessToken) {
     token_secret: token_secret,
     display_name: profile.displayName,
     account_id: profile.id,
+    subscribed: false,
     raw_metadata: profile._json
+  }
+  
+  // instagram automatically publishes realtime updates for authenticated users
+  if (provider == "instagram") {
+    this.tokens[provider].subscribed = true;
   }
 }
 
 // Public: offers a virtual to indicate whether user should go to verify
 //         step or directly to dashboard
 User.virtual('needs_verification')
+
+// Public: offers a pre-configured Flickr client for the current user
+//
+// Examples
+//
+//  var client = current_user.flickrClient();
+//
+// Returns a Flickr object with this user's oauth tokens set. Must have the 
+// node-flickr npm installed
+User.methods.flickrClient = function()
+{
+  if (this.tokens.flickr) {
+    return new Flickr(config.flickr.api_key, config.flickr.api_secret,
+                      {"oauth_token": this.tokens.flickr.token, "oauth_token_secret":this.tokens.flickr.token_secret});
+  }
+  
+  return null;
+}
 
 mongoose.model('User', User);

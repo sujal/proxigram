@@ -1,20 +1,86 @@
 var ImageList = mongoose.model("ImageList")
     , moment = require('moment')
     , _ = require('underscore')
-    , util = require('util');
+    , util = require('util'),
+    Flickr = require('flickr').Flickr;
 
 module.exports = function(app) {
   
+  // Internal: Used to capitalize the first letter of a string
+  //
+  // word   - the string to capitalize
+  //
+  // Examples
+  // 
+  //  capitalize("alphanumerical");
+  //
+  // Returns a copy of `word` with the first letter capitalized.
   function capitalize(word) {
     word.charAt(0).toUpperCase() + word.slice(1);
   }
   
+  // Internal: Filter used as final response for standard login requests
+  //
+  // req    - request object from the server
+  // res    - response object from the server
+  //
+  // Examples
+  //
+  //  app.get('/auth/instagram/callback', 
+  //    passport.authenticate('instagram', { failureRedirect: '/step1', successFlash: true, failureFlash: true }),
+  //    standard_login_response
+  //  );
+  //
+  // Returns nothing.
   function standard_login_response(req, res) {
     if (req.user.needs_verification == true) {
-      res.redirect('/step2');        
+      res.redirect('/step2');
     } else {
       res.redirect('/code');
     }
+  }
+  
+  // Internal: a filter that subscribes for updates to the current user's Flickr feed
+  //
+  // req  - request object from the server
+  // res  - response object from the server
+  //
+  // Examples
+  //
+  //  app.get('/dashboard', 
+  //    subscribeToFlickrUpdates,
+  //    function(req, res) {
+  //      process_connect_request("flickr", req, res);
+  //    });
+  //
+  // Returns nothing.
+  function subscribeToFlickrUpdates(req, res, next) {
+    var user = req.user;
+    // console.log("req.user.tokens is " + util.inspect(user.tokens) + " flickr: " + util.inspect(user.tokens.flickr.account_id != null));
+    if (user != null && user.tokens != null && user.tokens.flickr.account_id != null && 
+            (user.tokens.flickr.subscribed === false || user.tokens.flickr.subscribed == null)) {
+      var client = user.flickrClient();
+      if (client) {
+        client.executeAPIRequest("flickr.push.subscribe", {
+                                      topic: "my_photos"
+                                    , callback: config.flickr.push_callback_url + "?my_photos"
+                                    , verify: "async"
+                                  }, true, function(err, response){
+                                    if (err) {
+                                      console.log("ERROR: error subscribing " + user.id + 
+                                                " to Flickr updates for 'myPhotos': "+ util.inspect(err));
+                                    } else {
+                                      console.log("SUCCESS: subscribed " + user.id + " to Flickr updates for 'myPhotos'");                                    
+                                      user.set("tokens.flickr.subscribed",true);
+                                      user.save(function(err,user){
+                                        if (err) { console.log("ERROR: error saving subscribed flag for flickr sub"); }
+                                      });
+                                    }
+                                  });
+      }      
+    }
+    // we'll let this advance (user won't get feedback if sub failed)
+    next();
   }
   
   function process_connect_request(provider, req, res) {
@@ -85,7 +151,7 @@ module.exports = function(app) {
     }
   }
   
-  app.get('/code', ensureAuthenticated, function(req, res) {
+  app.get('/code', ensureAuthenticated, subscribeToFlickrUpdates, function(req, res) {
     res.render('users/code', { title: 'Your Dashboard' });
   });
   

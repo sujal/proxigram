@@ -29,9 +29,11 @@ if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") 
   
   config.flickr.oauth_callback_url = "http://proxigram.dev/auth/flickr/callback";
   config.flickr.connect_oauth_callback_url = "http://proxigram.dev/connect/flickr/callback";
+  config.flickr.push_callback_url = process.env.FLICKR_PUSH_CALLBACK_URL;
 
   config.facebook.oauth_callback_url = "http://proxigram.dev/auth/facebook/callback";
   config.facebook.connect_oauth_callback_url = "http://proxigram.dev/connect/facebook/callback";
+  config.facebook.push_callback_url = process.env.FACEBOOK_PUSH_CALLBACK_URL;
    
 } else {
   // some other environment
@@ -41,9 +43,11 @@ if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == "development") 
 
   config.flickr.oauth_callback_url = "http://proxigram.com/auth/flickr/callback";
   config.flickr.connect_oauth_callback_url = "http://proxigram.com/connect/flickr/callback";
+  config.flickr.push_callback_url = process.env.FLICKR_PUSH_CALLBACK_URL;
 
   config.facebook.oauth_callback_url = "http://proxigram.com/auth/facebook/callback";
   config.facebook.connect_oauth_callback_url = "http://proxigram.com/connect/facebook/callback";
+  config.facebook.push_callback_url = process.env.FACEBOOK_PUSH_CALLBACK_URL;
 
 }
 

@@ -5,9 +5,19 @@
 var express = require('express')
   , mongoose = require('mongoose')
   , connect = require('connect')
-  , HerokuRedisStore = require('connect-heroku-redis')(connect)
+  , RedisStore = require('connect-redis')(express)
   , lessMiddleware = require('less-middleware')
   , PuSHHelper = require('node-push-helper').PuSHHelper;
+
+// Heroku redistogo connection
+if (process.env.REDISTOGO_URL) {
+  rtg   = require('url').parse(process.env.REDISTOGO_URL);
+  redis_client = require('redis').createClient(rtg.port, rtg.hostname);
+  redis_client.auth(rtg.auth.split(':')[1]); // auth 1st part is username and 2nd is password separated by ":"
+} else {
+  // Localhost
+  redis_client = require("redis").createClient()
+}
 
 var User = mongoose.model('User');
 
@@ -55,7 +65,8 @@ function bootApplication(app) {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
-    app.use(express.session({ store: new HerokuRedisStore, secret: (process.env.SESSION_SECRET || "sssh sssh ssshhhhhhh") }));
+    app.use(express.session({ store: new RedisStore({client: redis_client}),
+                              secret: (process.env.SESSION_SECRET || "sssh sssh ssshhhhhhh") }));
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(express.static(__dirname + '/public', {maxAge: 86400000}));
