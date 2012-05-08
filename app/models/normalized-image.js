@@ -31,15 +31,17 @@ var NormalizedImage = new mongoose.Schema({
   //   text: TrimmedString
   // },
   caption: TrimmedString,
-  title: TrimmedString,
+  description: TrimmedString,
   comment_count: { type: Number, default: 0 },
   content_type: TrimmedString,
-  created_time: { type: Date },
+  created_time: { type: Date },       // time added to service (upload time on flickr)
+  taken_time: { type: String },         // time photo taken
   filter: TrimmedString,
   images: {
-    low_resolution: ImageTag,
-    standard_resolution: ImageTag,
-    thumbnail: ImageTag
+    low_resolution: ImageTag,         // 320 max side (driven by Instagram's sizes, 306)
+    standard_resolution: ImageTag,    // 640 max side (driven by Instagram's sizes, 612)
+    thumbnail: ImageTag,              // 150 max side (driven by Instagram's sizes, 150)
+    large: ImageTag                   // 1600 max side
   },
   likes_count: { type: Number, default: 0 },
   link: TrimmedString,
@@ -73,13 +75,14 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   if (media_data.comments != null) {
     this.comment_count = media_data.comments.count;
   }
-  this.content_type = media_data.type;
+  this.content_type = media_type_for_value(media_data.type);
   this.created_time = new Date(Number(media_data.created_time)*1000);
   this.filter = media_data.filter;
   this.images = {
     low_resolution: media_data.images.low_resolution ,
     standard_resolution: media_data.images.low_resolution ,
-    thumbnail: media_data.images.thumbnail
+    thumbnail: media_data.images.thumbnail ,
+    large: media_data.images.low_resolution
   };
   if (media_data.likes != null) {
     this.likes_count = media_data.likes.count;
@@ -91,6 +94,73 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.source_user = media_data.user;
   this.source_id = media_data.id;
   this.tags = media_data.tags;
+}
+
+NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
+  this.raw_json = media_data;
+  if (media_data.description != null) {
+    this.description = media_data.description._content;
+  }
+  this.caption = media_data.title;
+  this.content_type = media_type_for_value(media_data.media);
+  this.created_time = new Date(Number(media_data.dateupload)*1000);
+  this.taken_time = media_data.datetaken;
+  this.images = {
+    large: {
+      url: media_data.url_l,
+      width: Number(media_data.width_l),
+      height: Number(media_data.height_l)
+    },
+    standard_resolution: {
+      url: media_data.url_z,
+      width: Number(media_data.width_z),
+      height: Number(media_data.height_z)
+    },
+    low_resolution: {
+      url: media_data.url_n,
+      width: Number(media_data.width_n),
+      height: Number(media_data.height_n)
+    },
+    thumbnail: {
+      url: media_data.url_q,
+      width: Number(media_data.width_q),
+      height: Number(media_data.height_q)
+    }
+  };
+  this.link = "http://www.flickr.com/photos/" + media_data.owner + "/" + media_data.id;
+
+  if (media_data.latitude != null && media_data.longitude != null) {
+    this.location.latitude = media_data.latitude;
+    this.location.longitude = media_data.longitude;
+  }
+  
+  
+  this.source_user = {};
+  this.source_user.username = media_data.ownername;
+  this.source_user.full_name = media_data.ownername;
+  this.source_user.id = media_data.owner;
+  this.source_user.profile_picture = "http://farm"+media_data.iconfarm+".staticflickr.com/"+
+                                        media_data.iconserver+"/buddyicons/"+media_data.owner+".jpg";
+
+  this.source_id = media_data.id;
+  if (media_data.tags != null) {
+    this.tags = media_data.tags.split(" ");    
+  }  
+}
+
+function media_type_for_value(raw_value) {
+  var result = null;
+  switch (raw_value) {
+    case "video":
+      result = "video";
+      break;
+    case "photo":
+    case "image":
+    default: 
+      result = "image";
+      break;
+  }
+  return result;
 }
 
 mongoose.model('NormalizedImage', NormalizedImage);

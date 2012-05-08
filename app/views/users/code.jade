@@ -120,15 +120,15 @@
                   a(href="http://www.flickr.com/services/auth/list.gne?from=extend") Disconnect
                 - else
                   a(href="/connect/flickr") Connect Account
-              
-            .row
-              .span2.tool-label
-                strong Facebook:
-              .span2.tool-item
-                - if (current_user.tokens.facebook.account_id !== null)
-                  a(href="https://www.facebook.com/settings?tab=applications") Disconnect
-                - else
-                  a(href="/connect/facebook") Connect Account
+            - if (current_user.admin == true)
+              .row
+                .span2.tool-label
+                  strong Facebook:
+                .span2.tool-item
+                  - if (current_user.tokens.facebook.account_id !== null)
+                    a(href="https://www.facebook.com/settings?tab=applications") Disconnect
+                  - else
+                    a(href="/connect/facebook") Connect Account
             .row
               .span4.spacer
                 &nbsp;
