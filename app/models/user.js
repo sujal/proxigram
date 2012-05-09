@@ -189,6 +189,12 @@ User.methods.set_token_from_profile = function(provider, profile, accessToken) {
     raw_metadata: profile._json
   }
   
+  if (this.tokens[provider].display_name == null || this.tokens[provider].display_name == "") {
+    if (profile.username != null && profile.username != "") {
+      this.tokens[provider].display_name = profile.username;
+    }
+  }
+  
   // instagram automatically publishes realtime updates for authenticated users
   if (provider == "instagram") {
     this.tokens[provider].subscribed = true;

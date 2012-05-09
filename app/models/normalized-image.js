@@ -30,6 +30,8 @@ var NormalizedImage = new mongoose.Schema({
   //   metadata_id: TrimmedString,
   //   text: TrimmedString
   // },
+  user_id: {type: mongoose.Schema.ObjectId, ref: 'User'},
+  provider: TrimmedString,
   caption: TrimmedString,
   description: TrimmedString,
   comment_count: { type: Number, default: 0 },
@@ -64,10 +66,14 @@ var NormalizedImage = new mongoose.Schema({
   raw_json: {}
 });
 
+NormalizedImage.index({ user_id: 1, provider: 1, source_id: 1 }, { unique: true });
+NormalizedImage.index({ user_id: 1, created_time: -1 }, { });
+
 NormalizedImage.plugin(simpleTimestamps);
 
 NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.raw_json = media_data;
+  this.provider = "instagram";
 
   if (media_data.caption != null) {
     this.caption = media_data.caption.text
@@ -98,6 +104,8 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
 
 NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
   this.raw_json = media_data;
+  this.provider = "flickr";
+  
   if (media_data.description != null) {
     this.description = media_data.description._content;
   }
@@ -146,7 +154,7 @@ NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
   if (media_data.tags != null) {
     this.tags = media_data.tags.split(" ");    
   }  
-}
+};
 
 function media_type_for_value(raw_value) {
   var result = null;
@@ -163,4 +171,45 @@ function media_type_for_value(raw_value) {
   return result;
 }
 
+NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
+
+  if ('function' == typeof options) {
+    cb = options;
+    options = {};
+  }
+
+  if (typeof(options.limit) != 'number') {
+    options.limit = 30;
+  } else if (options.limit > 30) {
+    options.limit = 30;
+  }
+    
+  var myClass = this;
+  this.find({user_id: user.id}).sort('created_time', -1).limit(options.limit).exec(function(err, results){
+    if (err) { cb(err, results); }
+    console.log("results count = " + results.length);
+    if (results == null || results.length == 0 || moment().diff(moment(results[0].updated_at)) > 86400000) {
+      ImageList.refreshFeedsForUser(user, function(err, imageLists){
+        if (err) { 
+          console.log("ERROR: error refreshing imagelists"); 
+        } else {
+          console.log("Autorefresh for "+ user.id);
+        }
+        return cb(err, results);
+      });
+    } else {
+      return cb(err, results);
+    }
+  });
+  
+};
+
+// findAndModify helper method
+NormalizedImage.statics.findAndModify = function (query, sort, doc, options, callback) {
+  return this.collection.findAndModify(query, sort, doc, options, callback);
+};
+
+
 mongoose.model('NormalizedImage', NormalizedImage);
+require('./image-list');
+var ImageList = mongoose.model('ImageList');

@@ -156,16 +156,15 @@ module.exports = function(app) {
   });
   
   app.get('/users/refresh', ensureAuthenticated, function(req, res) {
-    ImageList.instagramPhotosForUser(req.user, {force_refresh: true}, function(err, imageList){
+    ImageList.refreshFeedsForUser(req.user, function(err, imageLists) {
       if (err) {
         req.flash("error", "There was an error refreshing the feed.");
       } else {
-        req.flash("info", "Successfully refreshed feed. New timestamp is: " + moment(imageList.updated_at).format('MM/DD/YYYY h:mm:ss a'));        
+        req.flash("info", "Successfully refreshed feed. New timestamp is: " + moment(imageLists[0].updated_at).format('MM/DD/YYYY h:mm:ss a'));        
       }
       res.redirect('/code');      
       });
-  });
-  
+  });  
   
   // AUTHENTICATION ROUTES
 

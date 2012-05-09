@@ -1,6 +1,7 @@
 var moment = require('moment');
 
 var ImageList = mongoose.model("ImageList");
+var NormalizedImage = mongoose.model("NormalizedImage");
 
 module.exports = function(app) {
   
@@ -11,13 +12,43 @@ module.exports = function(app) {
     function(req, res){
       var user = req.user
       var force_refresh = req.param("force_refresh", "false") == "true";
-      ImageList.instagramPhotosForUser(user, {force_refresh: force_refresh}, function(err, imageList){
+      var limit = Number(req.param("limit", "30"));
+      var options = { "limit": Number(limit) }
+      
+      function imageListCallback(err, normalizedImages) {
+        if (err) { throw err; }
         var outputObj = null;
-        if (imageList != null) {
-          var limit = Number(req.param("limit", "30"));
+        if (normalizedImages != null) {
           var include_raw = req.param("include_raw", "no");
 
-          outputObj = imageList.toObject();
+          outputObj = {
+            images: normalizedImages
+          }
+          
+          if (normalizedImages.length > 0){
+            outputObj.updated_at = normalizedImages[0].updated_at;
+            outputObj.provider = "blended";
+            outputObj.providers = {};
+            
+            if (user.tokens.instagram.token !== null) {
+              outputObj.providers.instagram = {
+                account_id: user.tokens.instagram.account_id,
+                display_name: user.tokens.instagram.display_name
+              }
+            }
+            if (user.tokens.flickr.token !== null) {
+              outputObj.providers.flickr = {
+                account_id: user.tokens.flickr.account_id,
+                display_name: user.tokens.flickr.display_name
+              }              
+            }
+            if (user.tokens.facebook.token !== null) {
+              outputObj.providers.facebook = {
+                account_id: user.tokens.facebook.account_id,
+                display_name: user.tokens.facebook.display_name
+              }
+            }
+          }
 
           if (limit < outputObj.images.length) {
             outputObj.images.splice(limit,outputObj.images.length-limit);
@@ -29,7 +60,20 @@ module.exports = function(app) {
           }          
         }
         res.send({meta: 200, data: outputObj}, 200);
-      });
+      }
+      
+      
+      if (force_refresh === true) {
+        ImageList.refreshFeedsForUser(user, function(err, imageLists){
+          if (err) { throw err; }
+          if (imageLists != null) {
+            NormalizedImage.latestImagesForUser(user, options, imageListCallback);
+          }
+        });
+      } else {
+        NormalizedImage.latestImagesForUser(user, options, imageListCallback);
+      }
+      
     }
   );
   

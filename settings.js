@@ -18,6 +18,9 @@ if (process.env.REDISTOGO_URL) {
   // Localhost
   redis_client = require("redis").createClient()
 }
+redis_client.on("error", function (err) {
+    console.log("ERROR: Redis Error - " + err);
+});
 
 var User = mongoose.model('User');
 

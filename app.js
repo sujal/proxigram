@@ -33,6 +33,7 @@ require('./db-connect')                // Bootstrap db connection
 var models_path = __dirname + '/app/models'
 var model_files = fs.readdirSync(models_path)
 model_files.forEach(function(file){
+  console.log("initialized: " + file);
   if (file == 'user.js')
     User = require(models_path+'/'+file)
   else

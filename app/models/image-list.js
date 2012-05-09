@@ -1,9 +1,6 @@
-require('./normalized-image');
-
 var moment = require('moment'),
+    util = require('util'),
     Flickr = require('flickr').Flickr;
-    
-var NormalizedImage = mongoose.model('NormalizedImage');
 
 var ImageList = new mongoose.Schema({
   provider: {
@@ -16,7 +13,7 @@ var ImageList = new mongoose.Schema({
     type: String,
     trim: true
   },
-  images: [NormalizedImage.schema],
+  images: [{type: mongoose.Schema.ObjectId, ref: 'NormalizedImage'}],
   response_json: {} // doesn't include images
 });
 
@@ -24,11 +21,6 @@ ImageList.index({ provider: 1, user_id: 1 }, { unique: true });
 ImageList.index({ provider: 1, provider_user_id: 1 }, { unique: true });
 
 ImageList.plugin(simpleTimestamps);
-
-
-ImageList.statics.photosForUser = function(user, options, cb) {
-  // TBD
-};
 
 ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
   
@@ -57,38 +49,64 @@ ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
 
 
 ImageList.statics.refreshFeedsForUser = function(user, cb) {
-  
-  for(var provider in user.tokens) {
 
+  // I'm too tired to figure out how to do this right... sigh
+  var provList = [];
+  var providers = ["instagram", "flickr", "facebook"];
+  for (var i=0; i < providers.length; i++) {
+    var provider = providers[i];
     var service_token = user.tokens[provider];
-    
-    if (service_token !== null) {
-
-      var refresh_func = null;
-
-      switch (provider) {
-        case "instagram":
-          refresh_func = ImageList.refreshInstagramFeedForUser;
-          break;
-        case "flickr":
-          refresh_func = ImageList.refreshFlickrFeedForUser;
-          break;
-        case "facebook":
-          refresh_func = ImageList.refreshFacebookFeedForUser;
-          break;
-        default:
-          console.log("No matching source found for " + service_token.provider);
-          break;
-      }
-
-      refresh_func(user, function(err, imageList) {
-
-      });
-      
+    if (service_token != null && service_token.token != null) {
+      provList.push(provider);      
     }
+  };
+
+  var count = provList.length;
+  var results = [];
+  
+  for (var i=0; i < provList.length; i++) {
+    var provider = provList[i];
+    this.refreshFeedForUserProvider(user, provider, function(err, imageList){
+      if (err) { return cb(err, imageList); }
+      if (imageList != null) {
+        results.push(imageList);
+      }
+      count--;
+      if (count == 0) {
+        cb(null, results);
+      }
+    });
+  };
+};
+
+ImageList.statics.refreshFeedForUserProvider = function(user, provider, cb) {
+  var refresh_func = null;
+
+  var myClass = this;
+
+  switch (provider) {
+    case "instagram":
+      refresh_func = "refreshInstagramFeedForUser";
+      break;
+    case "flickr":
+      refresh_func = "refreshFlickrFeedForUser";
+      break;
+    case "facebook":
+      refresh_func = null; //"refreshFacebookFeedForUser";
+      break;
+    default:
+      console.log("No matching source found for " + provider);
+      break;
   }
   
-};
+  if (refresh_func != null) {
+    console.log("calling for provider: " + provider);
+    myClass[refresh_func](user, cb);    
+  } else {
+    console.log("blah: " + provider);
+    cb(null, null);
+  }
+}
 
 ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
 
@@ -107,7 +125,7 @@ ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
         Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
           complete: function(data, pagination){
             console.log("instagram call complete, data count is "+data.length);
-            ImageList._populateImagesFromResponseAndSave(imageList, data, "instagram", cb);
+            myClass._populateImagesFromResponseAndSave(imageList, data, "instagram", cb);
           },
           error: function(errorMessage, errorObject, caller) {
             console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
@@ -151,14 +169,11 @@ ImageList.statics.refreshFlickrFeedForUser = function(user, cb) {
             if (!photos) {
               photos = [];
             }
-            ImageList._populateImagesFromResponseAndSave(imageList, photos, "flickr", cb);
+            myClass._populateImagesFromResponseAndSave(imageList, photos, "flickr", cb);
           }
         );
       }
     });
-  
-    
-    
   } else {
     throw(new Error("Unable to create flickr client for user: " + util.inspect(user)));
   }
@@ -171,7 +186,8 @@ ImageList.statics.refreshFacebookFeedForUser = function(user, cb) {
 ImageList.statics._populateImagesFromResponseAndSave = function (imageList, photoList, provider, cb) {
   if (photoList !== null) {
 
-      var new_images = [];        
+      var new_images = [];
+      var total_images = photoList.length;
       for (var i=0; i < photoList.length; i++) {
         var nimage = new NormalizedImage();
         switch (provider) {
@@ -184,20 +200,36 @@ ImageList.statics._populateImagesFromResponseAndSave = function (imageList, phot
           default:
             break;
         }
-        new_images.push(nimage);
+        
+        nimage.user_id = imageList.user_id;
+        
+        var nimage_obj = nimage.toObject();
+        delete nimage_obj._id;
+        
+        NormalizedImage.findAndModify({provider: provider, source_id: nimage.source_id}, 
+          {}, // sort
+          nimage_obj, 
+          {upsert: true, multi: false, safe: true, "new": true}, 
+          function(err, newObject){
+            if (err) {throw err;}
+            total_images--;
+            // console.log(util.inspect(newObject));
+            new_images.push(newObject._id);
+            if (total_images == 0) {
+              imageList.set("images", new_images);
+              imageList.save(function(err){
+                if (!err) 
+                { 
+                  cb(null, imageList); 
+                } else {
+                  console.log("there was an error: " + err); 
+                  cb(err, null) ;
+                }
+              });
+            }
+          }
+        );
       }
-
-      imageList.set("images", new_images);
-
-      imageList.save(function(err){
-        if (!err) 
-        { 
-          cb(null, imageList); 
-        } else {
-          console.log("there was an error: " + err); 
-          cb(err, null) ;
-        }
-      });
    }
 };
 
@@ -246,3 +278,6 @@ ImageList.statics.subscribeForFacebookUserNotifications = function (cb) {
 };
 
 mongoose.model('ImageList', ImageList);
+require ('./normalized-image');
+
+var NormalizedImage = mongoose.model('NormalizedImage');
