@@ -32,6 +32,8 @@ var NormalizedImage = new mongoose.Schema({
   // },
   user_id: {type: mongoose.Schema.ObjectId, ref: 'User'},
   provider: TrimmedString,
+  visible: {type: Boolean, default: true },
+  
   caption: TrimmedString,
   description: TrimmedString,
   comment_count: { type: Number, default: 0 },
@@ -67,13 +69,14 @@ var NormalizedImage = new mongoose.Schema({
 });
 
 NormalizedImage.index({ user_id: 1, provider: 1, source_id: 1 }, { unique: true });
-NormalizedImage.index({ user_id: 1, created_time: -1 }, { });
+NormalizedImage.index({ user_id: 1, visible: 1, created_time: -1 }, { });
 
 NormalizedImage.plugin(simpleTimestamps);
 
 NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.raw_json = media_data;
   this.provider = "instagram";
+  this.visible = true;
 
   if (media_data.caption != null) {
     this.caption = media_data.caption.text
@@ -105,6 +108,7 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
 NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
   this.raw_json = media_data;
   this.provider = "flickr";
+  this.visible = true;
   
   if (media_data.description != null) {
     this.description = media_data.description._content;
@@ -185,7 +189,7 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
   }
     
   var myClass = this;
-  this.find({user_id: user.id}).sort('created_time', -1).limit(options.limit).exec(function(err, results){
+  this.find({user_id: user.id, visible: true}).sort('created_time', -1).limit(options.limit).exec(function(err, results){
     if (err) { cb(err, results); }
     console.log("results count = " + results.length);
     if (results == null || results.length == 0 || moment().diff(moment(results[0].updated_at)) > 86400000) {
