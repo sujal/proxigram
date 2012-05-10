@@ -9,7 +9,7 @@ module.exports = function (app) {
     if (req.isAuthenticated()) {
       res.redirect('/code');
     } else {
-      res.render('misc/index', { title: 'A simple way to get your Instagram photos' });
+      res.render('misc/index', { title: 'A simple API for all of your photos' });
     }
   });
   
