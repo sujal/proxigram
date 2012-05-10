@@ -1,6 +1,7 @@
 var util = require('util');
 var ImageList = mongoose.model("ImageList");
 var User = mongoose.model("User");
+var Flickr = require('flickr').Flickr;
 
 module.exports = function(app) {
   
@@ -72,6 +73,22 @@ module.exports = function(app) {
         }
       };
     });
+  });
+  
+  app.get('/admin/flickr/jiggle_my_sub', ensureAuthenticated, ensureAdmin, function(req, res){
+    var client = req.user.flickrClient();
+    if (client) {
+      client.executeAPIRequest("flickr.push.unsubscribe", {
+                                    topic: "my_photos"
+                                  , callback: config.flickr.push_callback_url + "?user="+req.user.id+"&topic=my_photos"
+                                  , verify: "async"
+                                }, true, function(err, response){
+                                  if (err) { throw err; }
+                                  console.log("result is " + response);
+                                  res.redirect('/admin');
+                                });
+    }
+    
   });
   
 }

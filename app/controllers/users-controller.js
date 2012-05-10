@@ -108,7 +108,10 @@ module.exports = function(app) {
             if (err) { throw err; }
             req.flash("success", "Successfully connected <strong>"+service_token.display_name+
                   "</strong> ("+provider+") to your Proxigram account.");
-            res.redirect('/code');
+            ImageList.refreshFeedForUserProvider(user, provider, function(err, result){
+              if (err) { console.log("ERROR: error refreshing photos for new connect: " + user.displayName); }
+              res.redirect('/code');
+            });
           });
         } else {
           // token matches, just return
@@ -140,9 +143,12 @@ module.exports = function(app) {
         
         user.save(function(err){
           if (err) throw err;
-          req.flash("success", "Successfully connected <strong>"+service_token.display_name+
-                "</strong> ("+provider+") to your Proxigram account.");
-          res.redirect('/code');
+          ImageList.refreshFeedForUserProvider(user, provider, function(err, result){
+            if (err) { console.log("ERROR: error refreshing photos for new connect: " + user.displayName); }
+            req.flash("success", "Successfully connected <strong>"+service_token.display_name+
+                  "</strong> ("+provider+") to your Proxigram account.");
+            res.redirect('/code');
+          });
         });
       } else {
         // the user should never be null, but in case that happens, yell.
