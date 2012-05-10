@@ -10,8 +10,9 @@ module.exports = function (app) {
     PuSHHelper.handshake(req, res);
   });
   
-  // this is where Instagram will send updates (using POST)
-  app.post('/flickr/realtime', PuSHHelper.check_signature, function(req, res){
+  // this is where Flickr will send updates (using POST)
+  // does flickr send the signature?
+  app.post('/flickr/realtime', function(req, res){
     var notifications = req.body;
     console.log("FLICKR NOTIFICATION: " + util.inspect(notifications));
     
