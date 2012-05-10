@@ -30,7 +30,7 @@ ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
     options = {};
   }
   
-  console.log("I'm in instagramPhotosForUser");
+  // console.log("I'm in instagramPhotosForUser");
   var myClass = this;
   
   this.findOne({ provider: "instagram", user_id: user.id }, function(err, imageList) {
