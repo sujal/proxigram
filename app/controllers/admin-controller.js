@@ -80,7 +80,7 @@ module.exports = function(app) {
     if (client) {
       client.executeAPIRequest("flickr.push.unsubscribe", {
                                     topic: "my_photos"
-                                  , callback: config.flickr.push_callback_url + "?user="+req.user.id+"&topic=my_photos"
+                                  , callback: config.flickr.push_callback_url + "?user="+req.user.id+"&my_topic=my_photos"
                                   , verify: "async"
                                 }, true, function(err, response){
                                   if (err) { throw err; }

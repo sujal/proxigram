@@ -63,7 +63,7 @@ module.exports = function(app) {
       if (client) {
         client.executeAPIRequest("flickr.push.subscribe", {
                                       topic: "my_photos"
-                                    , callback: config.flickr.push_callback_url + "?my_photos"
+                                    , callback: config.flickr.push_callback_url + "?user="+user.id+"&my_topic=my_photos"
                                     , verify: "async"
                                   }, true, function(err, response){
                                     if (err) {
