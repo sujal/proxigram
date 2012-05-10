@@ -192,14 +192,15 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
   this.find({user_id: user.id, visible: true}).sort('created_time', -1).limit(options.limit).exec(function(err, results){
     if (err) { cb(err, results); }
     console.log("results count = " + results.length);
-    if (results == null || results.length == 0 || moment().diff(moment(results[0].updated_at)) > 86400000) {
+    if (options.prevent_refresh !== true && (results === null || results.length == 0 || moment().diff(moment(results[0].updated_at)) > 86400000)) {
       ImageList.refreshFeedsForUser(user, function(err, imageLists){
         if (err) { 
           console.log("ERROR: error refreshing imagelists"); 
         } else {
           console.log("Autorefresh for "+ user.id);
         }
-        return cb(err, results);
+        options.prevent_refresh = true;
+        return myClass.latestImagesForUser(user, options, cb);
       });
     } else {
       return cb(err, results);

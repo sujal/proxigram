@@ -101,10 +101,10 @@ ImageList.statics.refreshFeedForUserProvider = function(user, provider, cb) {
   }
   
   if (refresh_func != null) {
-    console.log("calling for provider: " + provider);
+    // console.log("calling for provider: " + provider);
     myClass[refresh_func](user, cb);    
   } else {
-    console.log("blah: " + provider);
+    // console.log("blah: " + provider);
     cb(null, null);
   }
 }
