@@ -1,5 +1,6 @@
 var User = mongoose.model("User")
   , util = require('util')
+  , moment = require('moment')
   , ImageList = mongoose.model("ImageList")
   , PuSHHelper = require('node-push-helper').PuSHHelper;
 
