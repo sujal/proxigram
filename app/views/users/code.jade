@@ -4,6 +4,15 @@
 .row
   .span8
     .row
+      .span8
+        .block-wrapper
+          .section-header API Key
+          .section-content
+            p.spaced
+              strong Your API Key is: 
+              code !{current_user.api_key}
+
+    .row
       .span5
         .block-wrapper.api-docs
           .section-header
@@ -28,6 +37,11 @@
               li
                 a(href="/docs/photos") /api/photos
             p 
+              strong Integration Tools
+            ul
+              li
+                a(href="/docs/jquery-plugin") jQuery plugin
+            p 
               strong Source: 
               small
                 | (This is all open source!)
@@ -36,67 +50,6 @@
                 a(href="https://github.com/sujal/proxigram") Proxigram on Github
               li
                 a(href="https://github.com/sujal/jquery-proxigram") jquery.proxigram.js
-            
-    .row
-      .span8
-        .block-wrapper
-          .section-header API Key
-          .section-content
-            p.spaced
-              strong Your API Key is: 
-              code !{current_user.api_key}
-    .row
-      .span8
-        .block-wrapper.jquery-sample
-          .section-header
-            | jQuery Plugin
-          .section-content
-            p
-              | There is a simple jQuery plugin available. There's documentation
-              | in the code snippet below. Just take a look at the comments.
-            p
-              strong
-                | The code below includes your personal API key. 
-              | It should be ready to go if you want to copy &amp;
-              | paste it into your site.
-            p
-              | If you have any questions, get in touch.
-            pre
-              code.prettyprint.linenums.lang-html
-                | &lt;!-- include this somewhere on your page --&gt;
-                | &lt;script src=&quot;http://s.proxigram.com/js/jquery.proxigram.js&quot;&gt;&lt;/script&gt;
-                | 
-                | &lt;!-- create an element where the photos will go --&gt;
-                | &lt;div class=&quot;row proxigram-photo-list&quot;&gt;&lt;/div&gt;
-                | 
-                | &lt;!-- then call the jQuery plugin on document ready. The code below
-                |      lists all the options, but only the access_token is required. 
-                |      For each option, the value shown is the default --&gt;
-                | &lt;script type=&quot;text/javascript&quot;&gt;
-                |   jQuery(document).ready(function($){
-                |     $('.proxigram-photo-list').proxigram({
-                |     
-                |       access_token: &quot;!{current_user.api_key}&quot; // required
-                |     
-                |       , api_endpoint: &quot;http://proxigram.com/api/photos&quot;
-                |       
-                |       , limit: 30                     // # of image to fetch &amp show
-                |                                       // max of 30 for now
-                |       
-                |       , include_raw: "no"            // include raw json from 
-                |                                       // Instagram for each image?
-                |                                       
-                |       , include_default_styles: true // if true, will add style tag 
-                |                                       // with minimal styling of images
-                |                                       
-                |       , complete: null                // a callback that fires after
-                |                                       // the API call returns. Args are:
-                |                                       // function(status_code, json_data)
-                |     })
-                |   });
-                | &lt;/script&gt;
-        
-
   .span4
     .block-wrapper.toolbox
       .section-header
@@ -137,16 +90,17 @@
                 strong &nbsp;
               .span2.tool-item
                 a.btn.btn-mini.btn-primary(href="/users/refresh") Refresh All Feeds
-            
-  
+
+.row
+  .span12
     .block-wrapper.image-test
       .section-header
         | Recent Images 
       .section-content
         .centered
           span.refreshed-date
-        !=partial('partials/image_test', {limit: 10})
-    
+        !=partial('partials/image_test', {limit: 30})
+  
 
 script(type="text/javascript")
   jQuery(document).ready(function($){

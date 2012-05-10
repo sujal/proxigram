@@ -89,7 +89,7 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.filter = media_data.filter;
   this.images = {
     low_resolution: media_data.images.low_resolution ,
-    standard_resolution: media_data.images.low_resolution ,
+    standard_resolution: media_data.images.standard_resolution,
     thumbnail: media_data.images.thumbnail ,
     large: media_data.images.low_resolution
   };

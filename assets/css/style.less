@@ -97,7 +97,7 @@ a { color: @color; }
 
 .image-test {
   .proxigram-photo-list {
-    width: 300px;
+    width: 900px;
     img {
       width: 120px;
     }
@@ -185,6 +185,22 @@ a { color: @color; }
       text-align: center;
     }
   }
-} 
+  .image-test {
+    .proxigram-photo-list {
+      width: 300px;
+    }
+  }
+  .toolbox .tool-label {
+    text-align: left;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .image-test {
+    .proxigram-photo-list {
+      width: 600px;
+    }
+  }
+}
 
 @import "prettify.less";

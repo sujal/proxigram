@@ -1,5 +1,6 @@
 var moment = require('moment'),
     util = require('util'),
+    _ = require('underscore'),
     Flickr = require('flickr').Flickr;
 
 var ImageList = new mongoose.Schema({
@@ -125,7 +126,7 @@ ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
         Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
           complete: function(data, pagination){
             console.log("instagram call complete, data count is "+data.length);
-            myClass._populateImagesFromResponseAndSave(imageList, data, "instagram", cb);
+            myClass._populateImagesFromResponseAndSave(imageList, data, "instagram", user, cb);
           },
           error: function(errorMessage, errorObject, caller) {
             console.log("there was an error getting our data: " + errorMessage + "|||" + errorObject + "$$$$" + caller);
@@ -169,7 +170,7 @@ ImageList.statics.refreshFlickrFeedForUser = function(user, cb) {
             if (!photos) {
               photos = [];
             }
-            myClass._populateImagesFromResponseAndSave(imageList, photos, "flickr", cb);
+            myClass._populateImagesFromResponseAndSave(imageList, photos, "flickr", user, cb);
           }
         );
       }
@@ -183,7 +184,7 @@ ImageList.statics.refreshFacebookFeedForUser = function(user, cb) {
   
 };
 
-ImageList.statics._populateImagesFromResponseAndSave = function (imageList, photoList, provider, cb) {
+ImageList.statics._populateImagesFromResponseAndSave = function (imageList, photoList, provider, user, cb) {
   if (photoList !== null) {
 
       var new_images = [];
@@ -196,6 +197,11 @@ ImageList.statics._populateImagesFromResponseAndSave = function (imageList, phot
             break;
           case "flickr":
             nimage.propulateFromFlickrMediaData(photoList[i]);
+            if (_.include(nimage.tags, "uploaded:by=instagram") && user.tokens.instagram.account_id !== null) {
+              // this means user has instagram connected and this flickr photo was uploaded by 
+              // instagram. Hide it by default.
+              nimage.visible = false;
+            }
             break;
           default:
             break;
