@@ -155,11 +155,16 @@ User.methods.generate_api_key = generate_api_key;
 //  
 // Returns: via callback, a user.
 User.methods.disconnect_oauth = function (provider_name, cb) {
-  this[provider_name] = {};
+  this.set("tokens."+provider_name+".token", null);
+  this.set("tokens."+provider_name+".token_secret", null);
+  this.set("tokens."+provider_name+".account_id", null);
+  this.set("tokens."+provider_name+".display_name", null);
+  this.set("tokens."+provider_name+".subscribed", null);
+  this.set("tokens."+provider_name+".raw_metadata", null);
   this.save(function(err){
     if (err) throw err;
     cb(null, this);
-  })
+  });
 };
 
 // Public: create and set a service_token entry for the current user

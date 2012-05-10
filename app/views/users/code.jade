@@ -60,7 +60,7 @@
                 strong Instagram:
               .span2.tool-item
                 - if (current_user.tokens.instagram.account_id !== null)
-                  a(href="https://instagram.com/accounts/manage_access#client_proxigram") Disconnect
+                  a(href="/auth/instagram/disconnect") Disconnect
                 - else
                   a(href="/connect/instagram") Connect Account
             .row
@@ -68,7 +68,7 @@
                 strong Flickr:
               .span2.tool-item
                 - if (current_user.tokens.flickr.account_id !== null)
-                  a(href="http://www.flickr.com/services/auth/list.gne?from=extend") Disconnect
+                  a(href="/auth/flickr/disconnect") Disconnect
                 - else
                   a(href="/connect/flickr") Connect Account
             - if (current_user.admin == true)
@@ -77,7 +77,7 @@
                   strong Facebook:
                 .span2.tool-item
                   - if (current_user.tokens.facebook.account_id !== null)
-                    a(href="https://www.facebook.com/settings?tab=applications") Disconnect
+                    a(href="/auth/facebook/disconnect") Disconnect
                   - else
                     a(href="/connect/facebook") Connect Account
             .row

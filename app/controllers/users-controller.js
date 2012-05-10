@@ -201,7 +201,9 @@ module.exports = function(app) {
     });
   
   app.get('/auth/instagram/disconnect', ensureAuthenticated, function(req, res){
-    req.user.disconnect("instagram");
+    req.user.disconnect_oauth("instagram", function(err, result){
+      res.redirect("https://instagram.com/accounts/manage_access#client_proxigram");
+    });
   });
 
   /* FLICKR calls */
@@ -232,7 +234,9 @@ module.exports = function(app) {
     });
   
   app.get('/auth/flickr/disconnect', ensureAuthenticated, function(req, res){
-    req.user.disconnect("flickr");
+    req.user.disconnect_oauth("flickr", function(err, result){
+      res.redirect("http://www.flickr.com/services/auth/list.gne?from=extend");
+    });
   });
 
   /* FACEBOOK calls */
@@ -270,7 +274,9 @@ module.exports = function(app) {
     });
   
   app.get('/auth/facebook/disconnect', ensureAuthenticated, function(req, res){
-    req.user.disconnect("facebook");
+    req.user.disconnect_oauth("facebook", function(err, result){
+      res.redirect("https://www.facebook.com/settings?tab=applications");
+    });
   });
 
   // LOGOUT function
