@@ -14,5 +14,8 @@ module.exports = function (app) {
   app.post('/flickr/realtime', PuSHHelper.check_signature, function(req, res){
     var notifications = req.body;
     console.log("FLICKR NOTIFICATION: " + util.inspect(notifications));
+    
+    // we can tell Flickr we're good to go because updates will happen async
+    res.send({meta: 200, message: "Received and understood."}, 200);
   });
 }
