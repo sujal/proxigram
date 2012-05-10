@@ -13,18 +13,20 @@ module.exports = function (app) {
   // this is where Flickr will send updates (using POST)
   // does flickr send the signature?
   app.post('/flickr/realtime', function(req, res){
+
     var notifications = req.body;
     console.log("FLICKR NOTIFICATION: " + util.inspect(notifications));
     
-    // fire this, but don't hold up the reply to flickr
-    ImageList.refreshFeedForUserProvider(req.user, "flickr", function(err, imageList) {
-      if (err) {
-        console.log("ERROR: Flickr notifiication had an error refreshing the feed: " + err);
-      } else {
-        console.log("SUCCESS: Flickr notification successfully refreshed feed. New timestamp is: " + moment(imageList.updated_at).format('MM/DD/YYYY h:mm:ss a'));
-      }
+    User.findOne({"_id": params["user_id"]}, function(err, user) {
+      // fire this, but don't hold up the reply to flickr
+      ImageList.refreshFeedForUserProvider(user, "flickr", function(err, imageList) {
+        if (err) {
+          console.log("ERROR: Flickr notifiication had an error refreshing the feed: " + err);
+        } else {
+          console.log("SUCCESS: Flickr notification successfully refreshed feed. New timestamp is: " + moment(imageList.updated_at).format('MM/DD/YYYY h:mm:ss a'));
+        }
+      });
     });
-    
     
     // we can tell Flickr we're good to go because updates will happen async
     res.send({meta: 200, message: "Received and understood."}, 200);
