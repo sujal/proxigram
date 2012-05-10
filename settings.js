@@ -6,7 +6,6 @@ var express = require('express')
   , mongoose = require('mongoose')
   , connect = require('connect')
   , RedisStore = require('connect-redis')(express)
-  , lessMiddleware = require('less-middleware')
   , PuSHHelper = require('node-push-helper').PuSHHelper;
 
 // Heroku redistogo connection
