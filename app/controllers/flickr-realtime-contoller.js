@@ -17,7 +17,7 @@ module.exports = function (app) {
     var notifications = req.body;
     console.log("FLICKR NOTIFICATION: " + util.inspect(notifications));
     
-    User.findById(params["user_id"], function(err, user) {
+    User.findById(req.param("user_id"), function(err, user) {
       // fire this, but don't hold up the reply to flickr
       ImageList.refreshFeedForUserProvider(user, "flickr", function(err, imageList) {
         if (err) {
