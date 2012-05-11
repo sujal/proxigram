@@ -26,6 +26,9 @@ var ServiceToken = {
     type: String,
     trim: true
   },
+  refreshed_at: {
+    type: Date
+  },
   subscribed: {
     type: Boolean,
     default: false

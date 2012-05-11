@@ -44,8 +44,8 @@ var NormalizedImage = new mongoose.Schema({
   images: {
     low_resolution: ImageTag,         // 320 max side (driven by Instagram's sizes, 306)
     standard_resolution: ImageTag,    // 640 max side (driven by Instagram's sizes, 612)
-    thumbnail: ImageTag,              // 150 max side (driven by Instagram's sizes, 150)
-    large: ImageTag                   // 1600 max side
+    thumbnail: ImageTag,              // 180 max side (driven by Instagram's sizes, 150)
+    large: ImageTag                   // 2048 max side
   },
   likes_count: { type: Number, default: 0 },
   link: TrimmedString,
@@ -160,6 +160,66 @@ NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
   }  
 };
 
+NormalizedImage.methods.populateFromFacebookMediaData = function(media_data){
+  this.raw_json = media_data;
+  this.provider = "facebook";
+  this.visible = true;
+  
+  this.caption = media_data.caption;
+  this.content_type = "image";
+  this.created_time = new Date(Number(media_data.created)*1000);
+
+  this.images = {};
+  
+  if (media_data.images.length >= 1)
+  {
+    this.images.large = {
+      url: media_data.images[0].source,
+      width: Number(media_data.images[0].width),
+      height: Number(media_data.images[0].height)
+    }
+  }
+  if (media_data.images.length >= 3)
+  {
+    this.images.standard_resolution = {
+      url: media_data.images[2].source,
+      width: Number(media_data.images[2].width),
+      height: Number(media_data.images[2].height)
+    }
+  }
+  if (media_data.images.length >= 5)
+  {
+    this.images.low_resolution = {
+      url: media_data.images[4].source,
+      width: Number(media_data.images[4].width),
+      height: Number(media_data.images[4].height)
+    }
+  }
+  if (media_data.images.length >= 7)
+  {
+    this.images.thumbnail = {
+      url: media_data.images[6].source,
+      width: Number(media_data.images[6].width),
+      height: Number(media_data.images[6].height)
+    }
+  }
+  
+  this.link = media_data.link;
+
+  this.source_user = {};
+  this.source_user.id = media_data.owner.toString();
+
+  if (media_data.like_info != null) {
+    this.likes_count = media_data.like_info.like_count;
+  }
+  if (media_data.comment_info != null) {
+    this.comment_count = media_data.comment_info.comment_count;
+  }
+  
+  this.source_id = media_data.object_id;
+  
+};
+
 function media_type_for_value(raw_value) {
   var result = null;
   switch (raw_value) {
@@ -191,8 +251,19 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
   var myClass = this;
   this.find({user_id: user.id, visible: true}).sort('created_time', -1).limit(options.limit).exec(function(err, results){
     if (err) { cb(err, results); }
-    console.log("results count = " + results.length);
-    if (options.prevent_refresh !== true && (results === null || results.length == 0 || moment().diff(moment(results[0].updated_at)) > 86400000)) {
+    // console.log("results count = " + results.length);
+    
+    var data_stale = false;
+    var providers = ImageList.allProviders();
+    for (var i=0; i < providers.length; i++) {
+      var theDate = user.tokens[providers[i]].refreshed_at;
+      if (theDate == null || moment().diff(moment(theDate)) > 43200000) {
+        data_stale = true;
+        break;
+      }
+    };
+    
+    if (options.prevent_refresh !== true && (results === null || results.length == 0 || data_stale === true)) {
       ImageList.refreshFeedsForUser(user, function(err, imageLists){
         if (err) { 
           console.log("ERROR: error refreshing imagelists"); 

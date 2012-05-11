@@ -68,6 +68,7 @@ function bootApplication(app) {
     app.use(express.methodOverride());
     app.use(express.cookieParser());
     app.use(express.session({ store: new RedisStore({client: redis_client}),
+                              cookie: { maxAge: 604800000 },
                               secret: (process.env.SESSION_SECRET || "sssh sssh ssshhhhhhh") }));
     app.use(passport.initialize());
     app.use(passport.session());

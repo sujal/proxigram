@@ -1,6 +1,7 @@
 var moment = require('moment'),
     util = require('util'),
     _ = require('underscore'),
+    Graph = require('fbgraph'),
     Flickr = require('flickr').Flickr;
 
 var ImageList = new mongoose.Schema({
@@ -22,6 +23,10 @@ ImageList.index({ provider: 1, user_id: 1 }, { unique: true });
 ImageList.index({ provider: 1, provider_user_id: 1 }, { unique: true });
 
 ImageList.plugin(simpleTimestamps);
+
+ImageList.statics.allProviders = function() {
+  return ["instagram", "flickr", "facebook"];
+}
 
 ImageList.statics.instagramPhotosForUser = function (user, options, cb) {
   
@@ -53,7 +58,7 @@ ImageList.statics.refreshFeedsForUser = function(user, cb) {
 
   // I'm too tired to figure out how to do this right... sigh
   var provList = [];
-  var providers = ["instagram", "flickr", "facebook"];
+  var providers = this.allProviders();
   for (var i=0; i < providers.length; i++) {
     var provider = providers[i];
     var service_token = user.tokens[provider];
@@ -93,7 +98,7 @@ ImageList.statics.refreshFeedForUserProvider = function(user, provider, cb) {
       refresh_func = "refreshFlickrFeedForUser";
       break;
     case "facebook":
-      refresh_func = null; //"refreshFacebookFeedForUser";
+      refresh_func = "refreshFacebookFeedForUser";
       break;
     default:
       console.log("No matching source found for " + provider);
@@ -125,7 +130,8 @@ ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
 
         Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
           complete: function(data, pagination){
-            console.log("instagram call complete, data count is "+data.length);
+            // console.log("instagram call complete, data count is "+data.length);
+            myClass.markRefreshTime(user, "instagram");
             myClass._populateImagesFromResponseAndSave(imageList, data, "instagram", user, cb);
           },
           error: function(errorMessage, errorObject, caller) {
@@ -170,9 +176,12 @@ ImageList.statics.refreshFlickrFeedForUser = function(user, cb) {
             if (!photos) {
               photos = [];
             }
+            myClass.markRefreshTime(user, "flickr");
             myClass._populateImagesFromResponseAndSave(imageList, photos, "flickr", user, cb);
           }
         );
+      } else {
+        cb(err, imageList);
       }
     });
   } else {
@@ -181,7 +190,36 @@ ImageList.statics.refreshFlickrFeedForUser = function(user, cb) {
 };
 
 ImageList.statics.refreshFacebookFeedForUser = function(user, cb) {
-  
+  var myClass = this;
+  if (user.tokens.facebook.token != null && user.tokens.facebook.token != "") {
+    var graph = new Graph(user.tokens.facebook.token);
+    if (graph) {
+      this.findOne({ provider: "facebook", user_id: user.id }, function(err, imageList) {
+        if (err === null) {
+          if (imageList === null) {
+            imageList = new myClass();
+            imageList.provider = "facebook";
+            imageList.user_id = user.id;
+            imageList.provider_user_id = user.tokens.facebook.account_id;
+          }
+          
+          graph.fql("SELECT object_id, pid, aid, owner, link, caption, created, modified, album_object_id, place_id, images, like_info, comment_info FROM photo WHERE album_object_id IN (SELECT object_id from album where owner = me() order by modified desc limit 30) ORDER BY created DESC LIMIT 30", function(err, results){
+            if (err === null) {
+              // console.log("facebook" + typeof(results.data));
+              myClass.markRefreshTime(user, "facebook");
+              myClass._populateImagesFromResponseAndSave(imageList, results.data, "facebook", user, cb);
+            } else {
+              // error
+              console.log("ERROR: error is " + util.inspect(err));
+              cb(err, results);
+            }
+          });
+        } else {
+          cb(err, imageList);
+        }
+      });
+    }
+  }
 };
 
 ImageList.statics._populateImagesFromResponseAndSave = function (imageList, photoList, provider, user, cb) {
@@ -197,9 +235,16 @@ ImageList.statics._populateImagesFromResponseAndSave = function (imageList, phot
             break;
           case "flickr":
             nimage.propulateFromFlickrMediaData(photoList[i]);
-            if (_.include(nimage.tags, "uploaded:by=instagram") && user.tokens.instagram.account_id !== null) {
+            if (user.tokens.instagram.account_id !== null && _.include(nimage.tags, "uploaded:by=instagram")) {
               // this means user has instagram connected and this flickr photo was uploaded by 
               // instagram. Hide it by default.
+              nimage.visible = false;
+            }
+            break;
+          case "facebook":
+            nimage.populateFromFacebookMediaData(photoList[i]);
+            if (user.tokens.instagram.account_id !== null && (/http:\/\/instagr\.?am/i).test(nimage.caption)) {
+              // this is an instagram picture, and like the flickr case, we hide dups
               nimage.visible = false;
             }
             break;
@@ -212,6 +257,8 @@ ImageList.statics._populateImagesFromResponseAndSave = function (imageList, phot
         var nimage_obj = nimage.toObject();
         delete nimage_obj._id;
         
+        // console.log("provider: " + provider + " source_id: " + nimage.source_id);
+        
         NormalizedImage.findAndModify({provider: provider, source_id: nimage.source_id}, 
           {}, // sort
           nimage_obj, 
@@ -220,8 +267,10 @@ ImageList.statics._populateImagesFromResponseAndSave = function (imageList, phot
             if (err) {throw err;}
             total_images--;
             // console.log(util.inspect(newObject));
+            // console.log("provider: " + provider + " newObject._id is " + newObject._id + " and " + newObject.source_id);
             new_images.push(newObject._id);
             if (total_images == 0) {
+              // console.log("provider: " + provider + " new_images are " + util.inspect(new_images));
               imageList.set("images", new_images);
               imageList.save(function(err){
                 if (!err) 
@@ -270,6 +319,24 @@ ImageList.statics.subscribeForInstagramUserNotifications = function (cb) {
     },
     error: function(errorMessage, errorObject, caller) {
       cb(errorMessage, errorObject);
+    }
+  });
+};
+
+ImageList.statics.markRefreshTime = function(user, provider) {
+  var cb = null;
+  if (arguments.length == 3) {
+    cb = arguments[2];
+  }
+  user.set("tokens."+provider+".refreshed_at", new Date());
+  user.save(function(err){
+    if (err) { 
+      console.log("ERROR: error updating "+ provider + " token refresh_date: " + util.inspect(err)); 
+    } else {
+      console.log("SUCCESS: refresh time updated for "+ provider +" for " + user.displayName);
+    }
+    if (cb !== null) {
+      cb(err);
     }
   });
 };
