@@ -256,10 +256,12 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
     var data_stale = false;
     var providers = ImageList.allProviders();
     for (var i=0; i < providers.length; i++) {
-      var theDate = user.tokens[providers[i]].refreshed_at;
-      if (theDate == null || moment().diff(moment(theDate)) > 43200000) {
-        data_stale = true;
-        break;
+      if (user.tokens[providers[i]].token !== null) {
+        var theDate = user.tokens[providers[i]].refreshed_at;
+        if (theDate == null || moment().diff(moment(theDate)) > 43200000) {
+          data_stale = true;
+          break;
+        }
       }
     };
     
