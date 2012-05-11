@@ -71,15 +71,14 @@
                   a(href="/auth/flickr/disconnect") Disconnect
                 - else
                   a(href="/connect/flickr") Connect Account
-            - if (current_user.admin == true)
-              .row
-                .span2.tool-label
-                  strong Facebook:
-                .span2.tool-item
-                  - if (current_user.tokens.facebook.account_id !== null)
-                    a(href="/auth/facebook/disconnect") Disconnect
-                  - else
-                    a(href="/connect/facebook") Connect Account
+            .row
+              .span2.tool-label
+                strong Facebook:
+              .span2.tool-item
+                - if (current_user.tokens.facebook.account_id !== null)
+                  a(href="/auth/facebook/disconnect") Disconnect
+                - else
+                  a(href="/connect/facebook") Connect Account
             .row
               .span4.spacer
                 &nbsp;
