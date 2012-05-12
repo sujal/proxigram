@@ -203,7 +203,7 @@ ImageList.statics.refreshFacebookFeedForUser = function(user, cb) {
             imageList.provider_user_id = user.tokens.facebook.account_id;
           }
           
-          graph.fql("SELECT object_id, pid, aid, owner, link, caption, created, modified, album_object_id, place_id, images, like_info, comment_info FROM photo WHERE album_object_id IN (SELECT object_id from album where owner = me() order by modified desc limit 30) ORDER BY created DESC LIMIT 30", function(err, results){
+          graph.fql("SELECT object_id, pid, aid, owner, link, caption, created, modified, album_object_id, place_id, images, like_info, comment_info FROM photo WHERE album_object_id IN (SELECT object_id from album where owner = me() order by modified desc limit 10) ORDER BY created DESC LIMIT 200", function(err, results){
             if (err === null) {
               // console.log("facebook" + typeof(results.data));
               myClass.markRefreshTime(user, "facebook");
