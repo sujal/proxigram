@@ -248,7 +248,7 @@ module.exports = function(app) {
   /* FACEBOOK calls */
   
   app.get('/auth/facebook',
-    passport.authenticate('facebook', { scope: ['user_status', 'user_photos', 'friends_photos'], 
+    passport.authenticate('facebook', { scope: ['read_stream', 'user_status', 'user_photos', 'friends_photos'], 
                                  successFlash: true, failureFlash: true }),
     function(req, res){
       // The request will be redirected to Twitter for authentication, so this
@@ -256,14 +256,14 @@ module.exports = function(app) {
     });
     
   app.get('/auth/facebook/callback', 
-    passport.authenticate('facebook', { scope: ['user_status', 'user_photos', 'friends_photos'],
+    passport.authenticate('facebook', { scope: ['read_stream', 'user_status', 'user_photos', 'friends_photos'],
                               failureRedirect: '/step1', 
                                  successFlash: true, failureFlash: true }),
     standard_login_response
   );
 
   app.get('/connect/facebook',
-    passport.authorize('facebook-connect', {scope: ['user_status', 'user_photos', 'friends_photos'], 
+    passport.authorize('facebook-connect', {scope: ['read_stream', 'user_status', 'user_photos', 'friends_photos'], 
                                   failureRedirect: '/code', 
                                      successFlash: true, failureFlash: true}),
     function(req, res){
@@ -272,7 +272,7 @@ module.exports = function(app) {
     });
 
   app.get('/connect/facebook/callback', 
-    passport.authorize('facebook-connect', { scope: ['user_status', 'user_photos', 'friends_photos'],
+    passport.authorize('facebook-connect', { scope: ['read_stream', 'user_status', 'user_photos', 'friends_photos'],
                                    failureRedirect: '/code', 
                                       successFlash: true, failureFlash: true }),
     function(req, res) {
