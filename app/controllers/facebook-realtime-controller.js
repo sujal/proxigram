@@ -1,5 +1,6 @@
 var User = mongoose.model("User")
   , ImageList = mongoose.model("ImageList")
+  , util = require('util')
   , PuSHHelper = require('node-push-helper').PuSHHelper;
 
 module.exports = function (app) {
@@ -11,6 +12,6 @@ module.exports = function (app) {
   
   // this is where Instagram will send updates (using POST)
   app.post('/facebook/realtime', PuSHHelper.check_signature, function(req, res){
-    
+    console.log("Data is " + util.inspect(req.body));
   });
 }

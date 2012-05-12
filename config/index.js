@@ -10,6 +10,7 @@ config = {
   facebook: {
     app_id: process.env.FACEBOOK_APP_ID
     , app_secret: process.env.FACEBOOK_APP_SECRET
+    , app_token: process.env.FACEBOOK_APP_TOKEN
   },
   db: {
     uri: process.env.MONGOHQ_URL || "mongodb://localhost/proxigram_development"
