@@ -22,7 +22,7 @@ module.exports = function (app) {
       // fire this, but don't hold up the reply to flickr
       ImageList.refreshFeedForUserProvider(user, "flickr", function(err, imageList) {
         if (err) {
-          console.log("ERROR: Flickr notifiication had an error refreshing the feed: " + err);
+          console.log("ERROR: Flickr notification had an error refreshing the feed: " + err);
         } else {
           console.log("SUCCESS: Flickr notification successfully refreshed feed. New timestamp is: " + moment(imageList.updated_at).format('MM/DD/YYYY h:mm:ss a'));
         }
