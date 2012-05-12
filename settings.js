@@ -29,6 +29,7 @@ Instagram.set('client_secret', config.instagram.client_secret);
 Instagram.set('callback_url', config.instagram.realtime_callback_url);
 Instagram.set('maxSockets', 10);
 
+
 exports.boot = function(app) {
   bootApplication(app);
 }
