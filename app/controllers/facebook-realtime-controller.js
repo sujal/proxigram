@@ -12,6 +12,7 @@ module.exports = function (app) {
   
   // this is where Instagram will send updates (using POST)
   app.post('/facebook/realtime', PuSHHelper.check_signature, function(req, res){
-    console.log("Data is " + util.inspect(req.body));
+    console.log("Data is " + util.inspect(req.body, false, null));
+    res.send({meta: 200, message: "Received and understood."}, 200);
   });
 }
