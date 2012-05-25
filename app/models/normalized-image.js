@@ -91,7 +91,7 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
     low_resolution: media_data.images.low_resolution ,
     standard_resolution: media_data.images.standard_resolution,
     thumbnail: media_data.images.thumbnail ,
-    large: media_data.images.low_resolution
+    large: media_data.images.standard_resolution
   };
   if (media_data.likes != null) {
     this.likes_count = media_data.likes.count;
