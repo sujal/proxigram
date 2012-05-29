@@ -13,7 +13,28 @@ script(type='text/javascript')
       complete: function(status_code, data){
         if (status_code == "success" && data != null && data.data != undefined) {
           $(".refreshed-date").text("Last update: " + moment(data.data.updated_at,"YYYY-MM-DDTHH:mm:ssZ").format('MM/DD/YYYY h:mm:ss Z'));
-          // $(".proxigram-image-wrapper").append("<a href='#' class='btn btn-mini'><i class='icon-minus-sign'></i>Hidden</a>");
+          $(".proxigram-image-wrapper").append("<div class='proxigram-controls'><a href='#' class='btn btn-mini'><i class='icon-minus-sign'></i>Hide</a></div>");
+          $(".proxigram-image-wrapper .proxigram-controls .btn").on("click", function(e){
+            e.preventDefault();
+            var button = $(this);
+            var clicked_id = $(this).parents(".proxigram-image-wrapper").attr("id");
+            $.ajax("/api/photo/"+clicked_id+"/hide?"+$.param({access_token: "!{current_user["api_key"]}"}),
+            {
+              type: "POST",
+              dataType: "json",
+              cache: false
+            }).done(function(data, success_code, jqXHR) {
+              if (success_code == "success") {
+                $("#"+clicked_id).css("opacity",0.5);
+                $(button).addClass("disabled");
+                $(button).attr("disabled","disabled");
+              }
+            }).fail(function(jqXHR, error_code, exception) {
+              alert("Failed to update document ("+error_code+"/"+jqXHR.status+")");
+            }).always(function(jqXHR, response_code) {
+              // no-op
+            });
+          });
         }
       }
     });

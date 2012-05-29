@@ -26,9 +26,10 @@ module.exports = function(app) {
           }
           
           if (normalizedImages.length > 0){
-            outputObj.updated_at = normalizedImages[0].updated_at;
+            outputObj.updated_at = normalizedImages[0].created_at;
             outputObj.provider = "blended";
             outputObj.providers = {};
+            outputObj.user_id = user._id;
             
             if (user.tokens.instagram.token !== null) {
               outputObj.providers.instagram = {
@@ -76,5 +77,25 @@ module.exports = function(app) {
       
     }
   );
+  
+  app.post('/api/photo/:id/hide', passport.authenticate('token-auth'), function(req, res){
+    var user = req.user;
+    NormalizedImage.findAndModify({_id: mongoose.Types.ObjectId(req.params.id)},
+      {},
+      {'$set': { 'visible': 'false' }},
+      {upsert: false, multi: false, safe: true, "new": true},
+      function(err, image){
+        if (err) { throw err; }
+        if (image) {
+          var result = {meta: 200};
+          result.data = {};
+          result.data.image = image;
+          res.send(result, 200);
+        } else {
+          res.send({meta: 404, message: "photo not found"}, 404);
+        }
+      }
+    );
+  });
   
 }
