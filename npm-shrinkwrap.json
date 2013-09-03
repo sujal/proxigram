@@ -188,18 +188,19 @@
     },
     "passport-instagram": {
       "version": "0.1.1",
-      "from": "passport-instagram@>= 0.1.1",
+      "from": "passport-instagram@0.1.1",
+      "resolved": "https://registry.npmjs.org/passport-instagram/-/passport-instagram-0.1.1.tgz",
       "dependencies": {
         "pkginfo": {
           "version": "0.2.3",
           "from": "pkginfo@0.2.x"
         },
         "passport-oauth": {
-          "version": "0.1.7",
+          "version": "0.1.15",
           "from": "passport-oauth@0.1.x",
           "dependencies": {
             "oauth": {
-              "version": "0.9.7",
+              "version": "0.9.10",
               "from": "oauth@0.9.x"
             }
           }
