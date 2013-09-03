@@ -50,7 +50,9 @@ function bootApplication(app) {
     //         src: __dirname + '/public',
     //         compress: true
     //     }));
-    app.use(require('connect-assets')());
+    app.use(require('connect-assets')({
+      src: __dirname + '/assets/'
+    }));
     
     // HACKY middleware to bring req.rawBody back since
     // Instagram-node-lib requires it. Will fix that lib
