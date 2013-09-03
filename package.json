@@ -27,7 +27,7 @@
     , "node-push-helper": "git://github.com/sujal/node-push-helper.git"
   }
   , "engines": {
-      "node": "0.6.x"
-    , "npm":  "1.1.x"
+      "node": "0.10.x"
+    , "npm":  "1.2.x"
   }
 }
