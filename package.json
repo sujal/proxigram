@@ -13,7 +13,7 @@
     , "passport-http-bearer": ">= 0.1.2"
     , "passport-flickr": ">= 0.0.1"
     , "passport-facebook": ">= 0.0.1"
-    , "mongoose": ">= 2.5.0"
+    , "mongoose": "2.6.0"
     , "hiredis": "*"
     , "redis": "*"
     , "connect": ">= 0.0.1 < 2"
