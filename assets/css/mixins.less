@@ -533,7 +533,7 @@
   .core (@gridColumnWidth, @gridGutterWidth) {
 
     .spanX (@index) when (@index > 0) {
-      (~".span@{index}") { .span(@index); }
+      .span@{index} { .span(@index); }
       .spanX(@index - 1);
     }
     .spanX (0) {}
