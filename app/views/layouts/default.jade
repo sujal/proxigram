@@ -1,4 +1,4 @@
-!!!
+doctype
 html
   head
     title= (typeof(title) == 'undefined' ? "" : title)
@@ -12,10 +12,10 @@ html
     != js('application')
     - if (app.settings.env == "development")
       != js("jquery.proxigram")
-    - else 
+    - else
       script(src="http://s.proxigram.com/js/jquery.proxigram.js")
-    
-      
+
+
   body
     header.container
       .row
@@ -25,7 +25,7 @@ html
               .span9
                 h1
                   a(href="/") Proxigram
-                  small= title 
+                  small= title
               .span3.header-link
                 - if (current_user != null)
                   a(href="/logout") Logout
@@ -37,9 +37,9 @@ html
     footer.container.footer
       .row
         .span6
-          | Copyright &copy; #{new Date().getFullYear()} 
-          a(href="http://forchesoftware.com") Forche Software 
-          | / 
+          | Copyright &copy; #{new Date().getFullYear()}
+          a(href="http://forchesoftware.com") Forche Software
+          | /
           a(href="http://twitter.com/sujal") @sujal
         .span1.offset3.footer-link
           a(href="/docs") Docs
@@ -47,7 +47,7 @@ html
           a(href="/faq") FAQ
         .span1.footer-link
           a(href="/about") About
-          
+
     script.
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-77378-12']);
