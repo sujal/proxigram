@@ -142,7 +142,7 @@ User.plugin(simpleTimestamps);
 // Public: Used to generate an API key for the user. Done on create or if the key is cleared
 //         because it is set as the default function for api_key.
 //
-// Examples: 
+// Examples:
 //            user.api_key = user.generate_api_key();
 //
 // Returns: a string containing the API Key
@@ -155,15 +155,20 @@ User.methods.generate_api_key = generate_api_key;
 //
 // Examples:
 //            user.disconnect_oauth("instagram", function(err, user){ ... });
-//  
+//
 // Returns: via callback, a user.
 User.methods.disconnect_oauth = function (provider_name, cb) {
-  this.set("tokens."+provider_name+".token", null);
-  this.set("tokens."+provider_name+".token_secret", null);
-  this.set("tokens."+provider_name+".account_id", null);
-  this.set("tokens."+provider_name+".display_name", null);
-  this.set("tokens."+provider_name+".subscribed", null);
-  this.set("tokens."+provider_name+".raw_metadata", null);
+
+  // var unset_param = {};
+  // unset_param["$unset"] = {};
+  // unset_param["$unset"]["tokens."+provider_name] = 1;
+
+  // User.update({_id: this._id}, unset_param }, function(err){
+  //   if (err) throw err;
+  //   cb(null, this);
+  // });
+
+  this.set("tokens."+provider_name, undefined);
   this.save(function(err){
     if (err) throw err;
     cb(null, this);
@@ -180,14 +185,14 @@ User.methods.disconnect_oauth = function (provider_name, cb) {
 //
 // Examples:
 //            user.set_token_from_profile("instagram", {...}, "1234567890");
-//  
+//
 // Returns: nothing.
 User.methods.set_token_from_profile = function(provider, profile, accessToken) {
   var token_secret = null;
   if (arguments.length == 4) {
     token_secret = arguments[3];
   }
-    
+
   this.tokens[provider] = {
     token: accessToken,
     token_secret: token_secret,
@@ -196,13 +201,13 @@ User.methods.set_token_from_profile = function(provider, profile, accessToken) {
     subscribed: false,
     raw_metadata: profile._json
   }
-  
+
   if (this.tokens[provider].display_name == null || this.tokens[provider].display_name == "") {
     if (profile.username != null && profile.username != "") {
       this.tokens[provider].display_name = profile.username;
     }
   }
-  
+
   // instagram automatically publishes realtime updates for authenticated users
   if (provider == "instagram") {
     this.tokens[provider].subscribed = true;
@@ -219,7 +224,7 @@ User.virtual('needs_verification')
 //
 //  var client = current_user.flickrClient();
 //
-// Returns a Flickr object with this user's oauth tokens set. Must have the 
+// Returns a Flickr object with this user's oauth tokens set. Must have the
 // node-flickr npm installed
 User.methods.flickrClient = function()
 {
@@ -227,7 +232,7 @@ User.methods.flickrClient = function()
     return new Flickr(config.flickr.api_key, config.flickr.api_secret,
                       {"oauth_token": this.tokens.flickr.token, "oauth_token_secret":this.tokens.flickr.token_secret});
   }
-  
+
   return null;
 }
 
