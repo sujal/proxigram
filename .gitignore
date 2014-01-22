@@ -3,6 +3,7 @@ public/styles/*.css
 .DS_Store
 
 *.tmproj
+*.sublime-*
 setup_env.sh
 .env
 builtAssets
