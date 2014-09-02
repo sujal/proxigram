@@ -379,7 +379,7 @@
       }
     },
     "hiredis": {
-      "version": "0.1.14",
+      "version": "0.1.17",
       "from": "hiredis@*"
     },
     "redis": {
