@@ -40,7 +40,7 @@ require("./lib/passport-config.js");
 
 function bootApplication(app) {
   app.configure(function(){
-  
+
     app.set('views', __dirname + '/app/views');
     app.set('view engine', 'jade');
     app.set('view options', { layout: 'layouts/default' });
@@ -50,10 +50,8 @@ function bootApplication(app) {
     //         src: __dirname + '/public',
     //         compress: true
     //     }));
-    app.use(require('connect-assets')({
-      src: __dirname + '/assets/'
-    }));
-    
+    app.use(require('connect-assets')());
+
     // HACKY middleware to bring req.rawBody back since
     // Instagram-node-lib requires it. Will fix that lib
     // soon.
@@ -79,19 +77,19 @@ function bootApplication(app) {
     app.use(express.logger(':method :url :status'));
     app.use(app.router);
   });
-  
+
   app.configure('development', function(){
     // app.use(express.errorHandler());
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   });
-  
+
   // Suppress errors, allow all search engines
   app.configure('production', function(){
   	app.all('/robots.txt', function(req,res) {
   		res.send('User-agent: *', {'Content-Type': 'text/plain'});
   	});
   });
-  
+
   // Template helpers
   app.dynamicHelpers({
   	'session': function(req, res) {
@@ -102,5 +100,5 @@ function bootApplication(app) {
   	},
   	messages: require('express-messages-bootstrap')
   });
-  
+
 }
