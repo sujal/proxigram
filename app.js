@@ -3,6 +3,7 @@
 
 var express = require('express');
 var fs = require('fs'),
+    forceSSL = require('express-force-ssl'),
     utils = require('./lib/utils');
 
 exports = module.exports = passport = require ('passport');
@@ -41,6 +42,7 @@ model_files.forEach(function(file){
 });
 
 var app = express.createServer();      // express app
+app.use(forceSSL);
 require('./settings').boot(app);        // Bootstrap application settings
 
 // Bootstrap controllers

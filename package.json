@@ -19,6 +19,7 @@
     , "connect": ">= 0.0.1 < 2"
     , "connect-redis": ">= 1.0.0"
     , "connect-assets": ">=2.1.0"
+    , "express-force-ssl": "~0.2.3"
     , "airbrake" : ">=0.2.0"
     , "instagram-node-lib": ">=0.0.7"
     , "express-messages-bootstrap": "git://github.com/sujal/express-messages-bootstrap.git#bootstrap2.0"

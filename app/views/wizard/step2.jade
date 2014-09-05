@@ -15,11 +15,11 @@
       a.btn.btn-large.btn-success(href="/code") Yes! Let's go!
       &nbsp;
       a.btn.btn-large.btn-inverse(href="/faq") No. Help me.
-    
+
 if (app.settings.env == "development")
   endpoint = "http://proxigram.dev/api/photos";
 else
-  endpoint = "http://proxigram.com/api/photos";
+  endpoint = "https://www.proxigram.com/api/photos";
 
 script(type='text/javascript').
   jQuery(document).ready(function($){
