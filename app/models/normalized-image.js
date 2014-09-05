@@ -88,10 +88,10 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.created_time = new Date(Number(media_data.created_time)*1000);
   this.filter = media_data.filter;
   this.images = {
-    low_resolution: media_data.images.low_resolution.replace(/^http:/, "https:") ,
-    standard_resolution: media_data.images.standard_resolution.replace(/^http:/, "https:"),
-    thumbnail: media_data.images.thumbnail.replace(/^http:/, "https:") ,
-    large: media_data.images.standard_resolution.replace(/^http:/, "https:")
+    low_resolution: media_data.images.low_resolution ,
+    standard_resolution: media_data.images.standard_resolution,
+    thumbnail: media_data.images.thumbnail ,
+    large: media_data.images.standard_resolution
   };
   if (media_data.likes != null) {
     this.likes_count = media_data.likes.count;
