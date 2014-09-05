@@ -33,7 +33,7 @@ var NormalizedImage = new mongoose.Schema({
   user_id: {type: mongoose.Schema.ObjectId, ref: 'User'},
   provider: TrimmedString,
   visible: {type: Boolean, default: true },
-  
+
   caption: TrimmedString,
   description: TrimmedString,
   comment_count: { type: Number, default: 0 },
@@ -88,10 +88,10 @@ NormalizedImage.methods.populateFromInstagramMediaData = function(media_data)  {
   this.created_time = new Date(Number(media_data.created_time)*1000);
   this.filter = media_data.filter;
   this.images = {
-    low_resolution: media_data.images.low_resolution ,
-    standard_resolution: media_data.images.standard_resolution,
-    thumbnail: media_data.images.thumbnail ,
-    large: media_data.images.standard_resolution
+    low_resolution: media_data.images.low_resolution.replace(/^http:/, "https:") ,
+    standard_resolution: media_data.images.standard_resolution.replace(/^http:/, "https:"),
+    thumbnail: media_data.images.thumbnail.replace(/^http:/, "https:") ,
+    large: media_data.images.standard_resolution.replace(/^http:/, "https:")
   };
   if (media_data.likes != null) {
     this.likes_count = media_data.likes.count;
@@ -109,7 +109,7 @@ NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
   this.raw_json = media_data;
   this.provider = "flickr";
   this.visible = true;
-  
+
   if (media_data.description != null) {
     this.description = media_data.description._content;
   }
@@ -145,8 +145,8 @@ NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
     this.location.latitude = media_data.latitude;
     this.location.longitude = media_data.longitude;
   }
-  
-  
+
+
   this.source_user = {};
   this.source_user.username = media_data.ownername;
   this.source_user.full_name = media_data.ownername;
@@ -156,21 +156,21 @@ NormalizedImage.methods.propulateFromFlickrMediaData = function(media_data) {
 
   this.source_id = media_data.id;
   if (media_data.tags != null) {
-    this.tags = media_data.tags.split(" ");    
-  }  
+    this.tags = media_data.tags.split(" ");
+  }
 };
 
 NormalizedImage.methods.populateFromFacebookMediaData = function(media_data){
   this.raw_json = media_data;
   this.provider = "facebook";
   this.visible = true;
-  
+
   this.caption = media_data.caption;
   this.content_type = "image";
   this.created_time = new Date(Number(media_data.created)*1000);
 
   this.images = {};
-  
+
   if (media_data.images.length >= 1)
   {
     this.images.large = {
@@ -203,7 +203,7 @@ NormalizedImage.methods.populateFromFacebookMediaData = function(media_data){
       height: Number(media_data.images[6].height)
     }
   }
-  
+
   this.link = media_data.link;
 
   this.source_user = {};
@@ -215,9 +215,9 @@ NormalizedImage.methods.populateFromFacebookMediaData = function(media_data){
   if (media_data.comment_info != null) {
     this.comment_count = media_data.comment_info.comment_count;
   }
-  
+
   this.source_id = media_data.object_id;
-  
+
 };
 
 function media_type_for_value(raw_value) {
@@ -228,7 +228,7 @@ function media_type_for_value(raw_value) {
       break;
     case "photo":
     case "image":
-    default: 
+    default:
       result = "image";
       break;
   }
@@ -247,12 +247,12 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
   } else if (options.limit > 30) {
     options.limit = 30;
   }
-    
+
   var myClass = this;
   this.find({user_id: user.id, visible: true}).sort('created_time', -1).limit(options.limit).exec(function(err, results){
     if (err) { cb(err, results); }
     // console.log("results count = " + results.length);
-    
+
     var data_stale = false;
     var providers = ImageList.allProviders();
     for (var i=0; i < providers.length; i++) {
@@ -264,11 +264,11 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
         }
       }
     };
-    
+
     if (options.prevent_refresh !== true && (results === null || results.length == 0 || data_stale === true)) {
       ImageList.refreshFeedsForUser(user, function(err, imageLists){
-        if (err) { 
-          console.log("ERROR: error refreshing imagelists"); 
+        if (err) {
+          console.log("ERROR: error refreshing imagelists");
         } else {
           console.log("Autorefresh for "+ user.id);
         }
@@ -279,7 +279,7 @@ NormalizedImage.statics.latestImagesForUser = function(user, options, cb) {
       return cb(err, results);
     }
   });
-  
+
 };
 
 // findAndModify helper method
