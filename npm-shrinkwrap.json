@@ -240,6 +240,11 @@
         }
       }
     },
+    "express-force-ssl": {
+      "version": "0.2.3",
+      "from": "express-force-ssl@0.2.3",
+      "resolved": "https://registry.npmjs.org/express-force-ssl/-/express-force-ssl-0.2.3.tgz"
+    },
     "express-messages-bootstrap": {
       "version": "0.0.8",
       "from": "express-messages-bootstrap@0.0.8",
