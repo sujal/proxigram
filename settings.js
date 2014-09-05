@@ -6,8 +6,8 @@ var express = require('express')
   , mongoose = require('mongoose')
   , connect = require('connect')
   , RedisStore = require('connect-redis')(express)
-  , forceSSL = require('express-force-ssl')
-  , PuSHHelper = require('node-push-helper').PuSHHelper;
+  , PuSHHelper = require('node-push-helper').PuSHHelper
+  , parseUrl = require('url').parse;
 
 // Heroku redistogo connection
 if (process.env.REDISTOGO_URL) {
@@ -29,6 +29,16 @@ Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
 Instagram.set('callback_url', config.instagram.realtime_callback_url);
 Instagram.set('maxSockets', 10);
+
+forceSSL = function(req, res, next){
+  if(!req.secure){
+    var httpsPort = req.app.get('httpsPort') || 443;
+    var fullUrl = parseUrl('http://' + req.header('Host') + req.url);
+    res.redirect('https://' + fullUrl.hostname + req.url, 301);
+  } else {
+    next();
+  }
+}
 
 
 exports.boot = function(app) {
