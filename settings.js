@@ -7,6 +7,7 @@ var express = require('express')
   , connect = require('connect')
   , RedisStore = require('connect-redis')(express)
   , PuSHHelper = require('node-push-helper').PuSHHelper
+  , tls = require('tls')
   , parseUrl = require('url').parse;
 
 // Heroku redistogo connection
