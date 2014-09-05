@@ -6,6 +6,7 @@ var express = require('express')
   , mongoose = require('mongoose')
   , connect = require('connect')
   , RedisStore = require('connect-redis')(express)
+  , forceSSL = require('express-force-ssl')
   , PuSHHelper = require('node-push-helper').PuSHHelper;
 
 // Heroku redistogo connection
@@ -73,6 +74,7 @@ function bootApplication(app) {
                               secret: (process.env.SESSION_SECRET || "sssh sssh ssshhhhhhh") }));
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(forceSSL);
     app.use(express.static(__dirname + '/public', {maxAge: 86400000}));
     app.use(express.logger(':method :url :status'));
     app.use(app.router);

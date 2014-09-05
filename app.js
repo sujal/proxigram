@@ -3,7 +3,6 @@
 
 var express = require('express');
 var fs = require('fs'),
-    forceSSL = require('express-force-ssl'),
     utils = require('./lib/utils');
 
 exports = module.exports = passport = require ('passport');
