@@ -41,7 +41,6 @@ model_files.forEach(function(file){
 });
 
 var app = express.createServer();      // express app
-app.use(forceSSL);
 require('./settings').boot(app);        // Bootstrap application settings
 
 // Bootstrap controllers
