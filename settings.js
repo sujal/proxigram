@@ -32,9 +32,7 @@ Instagram.set('callback_url', config.instagram.realtime_callback_url);
 Instagram.set('maxSockets', 10);
 
 forceSSL = function(req, res, next){
-  if (!(req.connection.server instanceof tls.Server  // for Express 2.x
-      || req.socket.socket.server instanceof tls.Server  // for Express 3.x
-      || 'https' === req.headers['x-forwarded-proto'])) {
+  if (!('https' === req.headers['x-forwarded-proto'])) {
     var fullUrl = parseUrl('http://' + req.header('Host') + req.url);
     res.redirect('https://' + fullUrl.hostname + req.url, 301);
   } else {
