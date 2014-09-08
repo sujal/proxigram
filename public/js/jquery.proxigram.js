@@ -1,6 +1,6 @@
 /*
- * jquery.proxigram.js
- * Copyright 2012 Forche LLC
+ * jquery.chromaticlove.js
+ * Copyright 2014 Forche LLC
  *
  * Significant portions inspired by jquery.instagram.js
  * https://github.com/potomak/jquery-instagram
@@ -9,13 +9,13 @@
 
 (function($){
 
-  $.fn.proxigram = function(options) {
+  $.fn.chromaticlove = $.fn.proxigram = function(options) {
 
 
 
     var that = this,
           settings = {
-            api_endpoint: location.protocol + "//www.proxigram.com/api/photos",
+            api_endpoint: location.protocol + "//www.chromaticlove.com/api/photos",
             access_token: null, // required
             limit: 30,
             include_raw: "no",
@@ -34,15 +34,15 @@
         final_image_url = final_image_url.replace(/^http:/, "https:");
       }
 
-      return $('<div>').addClass('proxigram-image-wrapper').attr('id', image._id).append(
-          $('<div>').addClass('proxigram-image').append(
+      return $('<div>').addClass('chromaticlove-image-wrapper').attr('id', image._id).append(
+          $('<div>').addClass('chromaticlove-image').append(
             $('<a>').attr('href', image.link).append(
-              $('<img>').addClass('proxigram-image').attr('src', final_image_url).attr('alt', "image by " + image.source_user.full_name )))).append(
-          $('<div>').addClass('proxigram-caption').text(image.caption)).append(
-          $('<div>').addClass('proxigram-meta').append (
-            $('<span>').addClass('proxigram-like-count').append(
+              $('<img>').addClass('chromaticlove-image').attr('src', final_image_url).attr('alt', "image by " + image.source_user.full_name )))).append(
+          $('<div>').addClass('chromaticlove-caption').text(image.caption)).append(
+          $('<div>').addClass('chromaticlove-meta').append (
+            $('<span>').addClass('chromaticlove-like-count').append(
               $("<a>").attr("href", image.link).text(image.likes_count + " likes"))).append (
-            $('<span>').addClass('proxigram-comment-count').append(
+            $('<span>').addClass('chromaticlove-comment-count').append(
               $("<a>").attr("href", image.link).text(image.comment_count + " comments"))));
     }
 
@@ -51,7 +51,7 @@
       if (2 == arguments.length) {
         display_messages = arguments[1];
       }
-      return $("<div class='proxigram-image-wrapper'><div class='proxigram-image'><!-- no image --></div><div class='proxigram-caption'>"+display_messages+"</div><div class='proxigram-meta'><!--"+message+"--></div></div>");
+      return $("<div class='chromaticlove-image-wrapper'><div class='chromaticlove-image'><!-- no image --></div><div class='chromaticlove-caption'>"+display_messages+"</div><div class='chromaticlove-meta'><!--"+message+"--></div></div>");
     }
 
     function finalUrlWithArguments(setting_options) {
@@ -70,7 +70,7 @@
     $(that).empty();
 
     if (settings.include_default_styles === true) {
-      var style_tag = $("<style type='text/css'>.proxigram-image-wrapper{min-height:210px;width:150px;padding:10px;margin:5px;background-color:#eee;font-size:10px;line-height:13px;text-align:left;} .proxigram-image-wrapper img{vertical-align:middle;} .proxigram-comment-count:before {content: ' '} .proxigram-image-wrapper span { display: inline-block; width: 75px; } .proxigram-image-wrapper .proxigram-meta{margin-top: 8px;} .proxigram-image-wrapper .proxigram-comment-count{ text-align: right;} .proxigram-image-wrapper .proxigram-image {min-height:150px;line-height: 150px;} .proxigram-caption{overflow:hidden;margin-top:8px;min-height:30px} </style>");
+      var style_tag = $("<style type='text/css'>.chromaticlove-image-wrapper{min-height:210px;width:150px;padding:10px;margin:5px;background-color:#eee;font-size:10px;line-height:13px;text-align:left;} .chromaticlove-image-wrapper img{vertical-align:middle;} .chromaticlove-comment-count:before {content: ' '} .chromaticlove-image-wrapper span { display: inline-block; width: 75px; } .chromaticlove-image-wrapper .chromaticlove-meta{margin-top: 8px;} .chromaticlove-image-wrapper .chromaticlove-comment-count{ text-align: right;} .chromaticlove-image-wrapper .chromaticlove-image {min-height:150px;line-height: 150px;} .chromaticlove-caption{overflow:hidden;margin-top:8px;min-height:30px} </style>");
       $(that).append(style_tag);
     }
     if (settings.access_token !== null) {

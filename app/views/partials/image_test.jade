@@ -1,23 +1,23 @@
 - if (typeof limit == 'undefined')
   - limit = 5
 
-div.row.proxigram-photo-list
+div.row.chromaticlove-photo-list
 if (app.settings.env == "development")
-  endpoint = "http://proxigram.dev/api/photos";
+  endpoint = "http://chromaticlove.dev/api/photos";
 else
-  endpoint = "https://www.proxigram.com/api/photos";
+  endpoint = "https://www.chromaticlove.com/api/photos";
 
 script(type='text/javascript').
   jQuery(document).ready(function($){
-    $('.proxigram-photo-list').proxigram({api_endpoint: "!{endpoint}", limit: !{limit}, access_token: "!{current_user["api_key"]}",
+    $('.chromaticlove-photo-list').chromaticlove({api_endpoint: "!{endpoint}", limit: !{limit}, access_token: "!{current_user["api_key"]}",
       complete: function(status_code, data){
         if (status_code == "success" && data != null && data.data != undefined) {
           $(".refreshed-date").text("Last update: " + moment(data.data.updated_at,"YYYY-MM-DDTHH:mm:ssZ").format('MM/DD/YYYY h:mm:ss Z'));
-          $(".proxigram-image-wrapper").append("<div class='proxigram-controls'><a href='#' class='btn btn-mini'><i class='icon-minus-sign'></i>Hide</a></div>");
-          $(".proxigram-image-wrapper .proxigram-controls .btn").on("click", function(e){
+          $(".chromaticlove-image-wrapper").append("<div class='chromaticlove-controls'><a href='#' class='btn btn-mini'><i class='icon-minus-sign'></i>Hide</a></div>");
+          $(".chromaticlove-image-wrapper .chromaticlove-controls .btn").on("click", function(e){
             e.preventDefault();
             var button = $(this);
-            var clicked_id = $(this).parents(".proxigram-image-wrapper").attr("id");
+            var clicked_id = $(this).parents(".chromaticlove-image-wrapper").attr("id");
             $.ajax("/api/photo/"+clicked_id+"/hide?"+$.param({access_token: "!{current_user["api_key"]}"}),
             {
               type: "POST",

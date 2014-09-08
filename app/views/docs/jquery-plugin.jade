@@ -3,16 +3,16 @@
     h2
       a(href="/docs") Documentation
       |  <span class="muted">&raquo;</span> jQuery Plugin
-      | 
+      |
     .block-wrapper.jquery-sample
       .section-header
         | jQuery Plugin
       .section-content
         p
           | There is a simple jQuery plugin available. There's documentation
-          | in the code snippet below. Just take a look at the comments.  
+          | in the code snippet below. Just take a look at the comments.
           strong
-            | The code below includes your personal API key. 
+            | The code below includes your personal API key.
           | It should be ready to go if you want to copy &amp;
           | paste it into your site.
         p
@@ -20,38 +20,38 @@
         pre
           code.prettyprint.linenums.lang-html
             | &lt;!-- include this somewhere on your page --&gt;
-            | &lt;script src=&quot;http://s.proxigram.com/js/jquery.proxigram.js&quot;&gt;&lt;/script&gt;
-            | 
+            | &lt;script src=&quot;http://s.chromaticlove.com/js/jquery.chromaticlove.js&quot;&gt;&lt;/script&gt;
+            |
             | &lt;!-- create an element where the photos will go --&gt;
-            | &lt;div class=&quot;row proxigram-photo-list&quot;&gt;&lt;/div&gt;
-            | 
+            | &lt;div class=&quot;row chromaticlove-photo-list&quot;&gt;&lt;/div&gt;
+            |
             | &lt;!-- then call the jQuery plugin on document ready. The code below
-            |      lists all the options, but only the access_token is required. 
+            |      lists all the options, but only the access_token is required.
             |      For each option, the value shown is the default --&gt;
             | &lt;script type=&quot;text/javascript&quot;&gt;
             |   jQuery(document).ready(function($){
-            |     $('.proxigram-photo-list').proxigram({
-            |     
+            |     $('.chromaticlove-photo-list').chromaticlove({
+            |
             |       access_token: &quot;!{current_user.api_key}&quot; // required
-            |     
-            |       , api_endpoint: &quot;http://proxigram.com/api/photos&quot;
-            |       
+            |
+            |       , api_endpoint: &quot;http://www.chromaticlove.com/api/photos&quot;
+            |
             |       , limit: 30                     // # of image to fetch &amp show
             |                                       // max of 30 for now
-            |       
-            |       , include_raw: "no"            // include raw json from 
+            |
+            |       , include_raw: "no"            // include raw json from
             |                                       // Instagram for each image?
-            |                                       
-            |       , include_default_styles: true // if true, will add style tag 
+            |
+            |       , include_default_styles: true // if true, will add style tag
             |                                       // with minimal styling of images
-            |                                       
+            |
             |       , complete: null                // a callback that fires after
             |                                       // the API call returns. Args are:
             |                                       // function(status_code, json_data)
             |     })
             |   });
             | &lt;/script&gt;
-    
+
 script(type="text/javascript").
   jQuery(document).ready(function($){
     prettyPrint();

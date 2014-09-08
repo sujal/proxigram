@@ -1,4 +1,4 @@
-# Proxigram (or Proxstagram)
+# ChromaticLove 0.1.0 (or Proxstagram or Proxigram)
 
 An experiment in node.js, express.js, and Instagram running on Heroku
 using less.js.
