@@ -33,6 +33,7 @@ Instagram.set('maxSockets', 10);
 
 forceSSL = function(req, res, next){
   if (!('https' === req.headers['x-forwarded-proto'])) {
+    console.log(req.header('Host'));
     var fullUrl = parseUrl('http://' + req.header('Host') + req.url);
     res.redirect('https://' + fullUrl.hostname + req.url, 301);
   } else {
