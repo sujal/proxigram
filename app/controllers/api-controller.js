@@ -4,18 +4,20 @@ var ImageList = mongoose.model("ImageList");
 var NormalizedImage = mongoose.model("NormalizedImage");
 
 module.exports = function(app) {
-  
+
   app.get('/api/photos',
     passport.authenticate('token-auth'),
     // need to do a token check, not a passport auth check
-    // passport.authenticate('instagram', { failureRedirect: '/' }), 
+    // passport.authenticate('instagram', { failureRedirect: '/' }),
     function(req, res){
       var user = req.user
       var force_refresh = req.param("force_refresh", "false") == "true";
       var limit = Number(req.param("limit", "30"));
       var options = { "limit": Number(limit) }
-      
+
       function imageListCallback(err, normalizedImages) {
+
+        console.log("#{"+err+"} is #{"+normalizedImages.length+"}")
         if (err) { throw err; }
         var outputObj = null;
         if (normalizedImages != null) {
@@ -24,13 +26,13 @@ module.exports = function(app) {
           outputObj = {
             images: normalizedImages
           }
-          
+
           if (normalizedImages.length > 0){
             outputObj.updated_at = normalizedImages[0].created_at;
             outputObj.provider = "blended";
             outputObj.providers = {};
             outputObj.user_id = user._id;
-            
+
             if (user.tokens.instagram.token !== null) {
               outputObj.providers.instagram = {
                 account_id: user.tokens.instagram.account_id,
@@ -41,7 +43,7 @@ module.exports = function(app) {
               outputObj.providers.flickr = {
                 account_id: user.tokens.flickr.account_id,
                 display_name: user.tokens.flickr.display_name
-              }              
+              }
             }
             if (user.tokens.facebook.token !== null) {
               outputObj.providers.facebook = {
@@ -52,18 +54,20 @@ module.exports = function(app) {
           }
 
           if (limit < outputObj.images.length) {
+            console.log("trimming")
             outputObj.images.splice(limit,outputObj.images.length-limit);
           }
           if (include_raw == "no" || include_raw == "false" || include_raw === false) {
             for (var i = outputObj.images.length - 1; i >= 0; i--){
               outputObj.images[i].raw_json = undefined;
-            }          
-          }          
+            }
+          }
         }
+        // console.log("final output length " + outputObj.images.length);
         res.send({meta: 200, data: outputObj}, 200);
       }
-      
-      
+
+
       if (force_refresh === true) {
         ImageList.refreshFeedsForUser(user, function(err, imageLists){
           if (err) { throw err; }
@@ -74,10 +78,10 @@ module.exports = function(app) {
       } else {
         NormalizedImage.latestImagesForUser(user, options, imageListCallback);
       }
-      
+
     }
   );
-  
+
   app.post('/api/photo/:id/hide', passport.authenticate('token-auth'), function(req, res){
     var user = req.user;
     NormalizedImage.findAndModify({_id: mongoose.Types.ObjectId(req.params.id)},
@@ -97,5 +101,5 @@ module.exports = function(app) {
       }
     );
   });
-  
+
 }

@@ -130,7 +130,7 @@ ImageList.statics.refreshInstagramFeedForUser = function(user, cb) {
 
         Instagram.users.recent({ count: 30, user_id: user.tokens.instagram.account_id, access_token: user.tokens.instagram.token,
           complete: function(data, pagination){
-            // console.log("instagram call complete, data count is "+data.length);
+            console.log("instagram call complete, data count is "+data.length);
             myClass.markRefreshTime(user, "instagram");
             myClass._populateImagesFromResponseAndSave(imageList, data, "instagram", user, cb);
           },
@@ -268,7 +268,7 @@ ImageList.statics._populateImagesFromResponseAndSave = function (imageList, phot
             if (err) {throw err;}
             total_images--;
             // console.log(util.inspect(newObject));
-            // console.log("provider: " + provider + " newObject._id is " + newObject._id + " and " + newObject.source_id);
+            console.log("provider: " + provider + " newObject._id is " + newObject._id + " and " + newObject.source_id);
             new_images.push(newObject._id);
             if (total_images == 0) {
               // console.log("provider: " + provider + " new_images are " + util.inspect(new_images));

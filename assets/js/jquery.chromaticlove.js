@@ -28,7 +28,13 @@
 
     function createImageElement(image) {
 
-      var final_image_url = image.images.thumbnail.url;
+      var final_image_url = null;
+
+      if (image.images.thumbnail) {
+        final_image_url = image.images.thumbnail.url;
+      } else if (image.images.standard_resolution) {
+        final_image_url = image.images.standard_resolution.url
+      }
 
       if (location.protocol == "https:" && final_image_url.match(/^https:/) === null) {
         final_image_url = final_image_url.replace(/^http:/, "https:");
@@ -85,7 +91,7 @@
             that.append(createImageElement(image));
           }
         } else {
-          that.append(createEmptyElment());
+          that.append(createEmptyElement());
         }
         fireCallback(success_code, data);
       }).fail(function(jqXHR, error_code, exception){
