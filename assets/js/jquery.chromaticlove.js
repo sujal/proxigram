@@ -33,7 +33,7 @@
       if (image.images.thumbnail) {
         final_image_url = image.images.thumbnail.url;
       } else if (image.images.standard_resolution) {
-        final_image_url = image.images.standard_resolution.url
+        final_image_url = image.images.standard_resolution.url;
       }
 
       if (location.protocol == "https:" && final_image_url.match(/^https:/) === null) {
