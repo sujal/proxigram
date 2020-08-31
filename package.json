@@ -16,7 +16,7 @@
     , "mongoose": "5.7.5"
     , "hiredis": "*"
     , "redis": "*"
-    , "connect": ">= 0.0.1 < 2"
+    , "connect": ">= 0.0.1 < 4"
     , "connect-redis": ">= 1.0.0"
     , "connect-assets": ">=2.1.0"
     , "airbrake" : ">=0.2.0"
