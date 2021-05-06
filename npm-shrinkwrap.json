@@ -1328,9 +1328,9 @@
       "integrity": "sha1-CzpmK10Ewxd7GSa+qCsD+Dei70E="
     },
     "underscore": {
-      "version": "1.5.1",
-      "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.5.1.tgz",
-      "integrity": "sha512-yOc7VukmA45a1D6clUn1mD7Mbc9LcVYAQEXNKSTblzha59hSFJ6cAt90JDoxh05GQnTPI9nk4wjT/I8C/nAMPw=="
+      "version": "1.12.1",
+      "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.12.1.tgz",
+      "integrity": "sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw=="
     }
   }
 }

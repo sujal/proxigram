@@ -4,7 +4,7 @@
   , "private": true
   , "dependencies": {
       "express": "2.5.8"
-    , "underscore": "1.5.1"
+    , "underscore": "1.12.1"
     , "jade": "0.30.0"
     , "less": "1.4.2"
     , "moment": ">= 0.0.1"
